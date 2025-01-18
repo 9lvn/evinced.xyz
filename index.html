@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>works</title>
+    <title>Send Message to Discord</title>
     <style>
         body {
             margin: 0;
@@ -73,8 +73,7 @@
     </div>
 
     <script>
-        function sendMessage() {
-            const webhookUrl = "https://discord.com/api/webhooks/1330173184871235695/lOtIB6FEivCWw5KcjFYgt6OUzgr7gMnI-i0DuJKnJ-bwidYIHAOShrwj0rj7w0CqjlXV"; // Replace with your Discord webhook URL
+        async function sendMessage() {
             const message = document.getElementById('message').value;
 
             if (!message) {
@@ -82,30 +81,27 @@
                 return;
             }
 
-            const payload = {
-                content: message
-            };
+            try {
+                const response = await fetch('/send-message', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ message }),
+                });
 
-            fetch(webhookUrl, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(payload)
-            })
-            .then(response => {
+                const result = await response.json();
                 if (response.ok) {
                     document.getElementById('status').style.display = 'block';
                     document.getElementById('status').textContent = 'Message sent successfully!';
                 } else {
-                    throw new Error('Failed to send message');
+                    throw new Error(result.error || 'Failed to send message');
                 }
-            })
-            .catch(error => {
+            } catch (error) {
                 document.getElementById('status').style.display = 'block';
                 document.getElementById('status').textContent = 'Failed to send message.';
                 console.error('Error:', error);
-            });
+            }
 
             document.getElementById('message').value = ''; // Clear the message input
         }
