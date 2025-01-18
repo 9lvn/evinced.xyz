@@ -3,108 +3,56 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Send Message to Discord</title>
+    <title>Your Social Links</title>
     <style>
         body {
-            margin: 0;
             font-family: Arial, sans-serif;
-            background: #23272A;
-            color: #FFFFFF;
+            background-color: #f0f0f0;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
+            margin: 0;
         }
-
         .container {
-            background: #2C2F33;
-            border-radius: 10px;
+            background-color: white;
+            border-radius: 8px;
             padding: 20px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
             text-align: center;
-            width: 100%;
-            max-width: 400px;
+            width: 300px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
-
         h1 {
-            color: #7289DA;
-            font-size: 1.8rem;
-            margin-bottom: 10px;
+            margin-bottom: 20px;
+            font-size: 24px;
+            color: #333;
         }
-
-        textarea {
-            width: 100%;
-            height: 100px;
-            border: none;
-            border-radius: 5px;
-            padding: 10px;
-            font-size: 1rem;
-            margin-bottom: 15px;
+        .social-links a {
+            display: block;
+            text-decoration: none;
+            color: #fff;
+            background-color: #3498db;
+            margin: 10px 0;
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 18px;
+            transition: background-color 0.3s;
         }
-
-        .btn {
-            background: #7289DA;
-            color: #FFFFFF;
-            border: none;
-            padding: 10px 20px;
-            font-size: 1rem;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-
-        .btn:hover {
-            background: #5b6eae;
-        }
-
-        .message {
-            color: #FF6E6E;
-            margin-top: 10px;
-            display: none;
+        .social-links a:hover {
+            background-color: #2980b9;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Send a Message</h1>
-        <textarea id="message" placeholder="Enter your message here..."></textarea>
-        <button class="btn" onclick="sendMessage()">Send</button>
-        <p id="status" class="message">Message sent successfully!</p>
+        <h1>Your Social Links</h1>
+        <div class="social-links">
+            <a href="https://www.youtube.com/c/YourChannel" target="_blank">YouTube</a>
+            <a href="https://www.tiktok.com/@YourHandle" target="_blank">TikTok</a>
+            <a href="https://twitter.com/YourHandle" target="_blank">Twitter</a>
+            <a href="https://www.instagram.com/YourHandle" target="_blank">Instagram</a>
+            <a href="https://www.facebook.com/YourPage" target="_blank">Facebook</a>
+        </div>
     </div>
-
-    <script>
-        async function sendMessage() {
-            const message = document.getElementById('message').value;
-
-            if (!message) {
-                alert('Please enter a message before sending.');
-                return;
-            }
-
-            try {
-                const response = await fetch('/send-message', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ message }),
-                });
-
-                const result = await response.json();
-                if (response.ok) {
-                    document.getElementById('status').style.display = 'block';
-                    document.getElementById('status').textContent = 'Message sent successfully!';
-                } else {
-                    throw new Error(result.error || 'Failed to send message');
-                }
-            } catch (error) {
-                document.getElementById('status').style.display = 'block';
-                document.getElementById('status').textContent = 'Failed to send message.';
-                console.error('Error:', error);
-            }
-
-            document.getElementById('message').value = ''; // Clear the message input
-        }
-    </script>
 </body>
 </html>
