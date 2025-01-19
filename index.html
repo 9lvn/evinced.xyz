@@ -3,112 +3,114 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>working</title>
+    <title>Discord Webhook Message Sender</title>
     <style>
         body {
-            margin: 0;
             font-family: Arial, sans-serif;
-            background: #23272A;
-            color: #FFFFFF;
+            margin: 0;
+            padding: 0;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
+            background-color: #f3f3f3;
         }
-
-        .container {
-            background: #2C2F33;
-            border-radius: 10px;
+        .form-container {
+            background: white;
             padding: 20px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 300px;
+        }
+        .form-container h2 {
             text-align: center;
-            width: 100%;
-            max-width: 400px;
         }
-
-        h1 {
-            color: #7289DA;
-            font-size: 1.8rem;
-            margin-bottom: 10px;
-        }
-
-        textarea {
-            width: 100%;
-            height: 100px;
-            border: none;
-            border-radius: 5px;
-            padding: 10px;
-            font-size: 1rem;
+        .form-group {
             margin-bottom: 15px;
         }
-
-        .btn {
-            background: #7289DA;
-            color: #FFFFFF;
-            border: none;
-            padding: 10px 20px;
-            font-size: 1rem;
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
             border-radius: 5px;
+            font-size: 14px;
+        }
+        .form-group textarea {
+            resize: none;
+            height: 100px;
+        }
+        .form-group button {
+            width: 100%;
+            padding: 10px;
+            background-color: #5865F2;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
             cursor: pointer;
-            transition: background 0.3s;
         }
-
-        .btn:hover {
-            background: #5b6eae;
-        }
-
-        .message {
-            color: #FF6E6E;
-            margin-top: 10px;
-            display: none;
+        .form-group button:hover {
+            background-color: #4752C4;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Message here:</h1>
-        <textarea id="message" placeholder="Enter your message here..."></textarea>
-        <button class="btn" onclick="sendMessage()">Send</button>
-        <p id="status" class="message">Message sent successfully!</p>
+    <div class="form-container">
+        <h2>Send a Message</h2>
+        <form id="messageForm">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" placeholder="Enter your username" required>
+            </div>
+            <div class="form-group">
+                <label for="message">Message</label>
+                <textarea id="message" name="message" placeholder="Enter your message" required></textarea>
+            </div>
+            <div class="form-group">
+                <button type="submit">Send</button>
+            </div>
+        </form>
     </div>
 
     <script>
-        function sendMessage() {
-            const webhookUrl = "https://discord.com/api/webhooks/1330173184871235695/lOtIB6FEivCWw5KcjFYgt6OUzgr7gMnI-i0DuJKnJ-bwidYIHAOShrwj0rj7w0CqjlXV"; // Replace with your Discord webhook URL
+        document.getElementById('messageForm').addEventListener('submit', function(e) {
+            e.preventDefault(); // Prevent form from refreshing the page
+            
+            const username = document.getElementById('username').value;
             const message = document.getElementById('message').value;
 
-            if (!message) {
-                alert('Please enter a message before sending.');
-                return;
-            }
-
+            // Construct the payload for the Discord webhook
             const payload = {
+                username: username,
                 content: message
             };
 
-            fetch(webhookUrl, {
-                method: 'POST',
+            // Send the payload to the Discord webhook
+            fetch("https://discord.com/api/webhooks/1330173184871235695/lOtIB6FEivCWw5KcjFYgt6OUzgr7gMnI-i0DuJKnJ-bwidYIHAOShrwj0rj7w0CqjlXV", {
+                method: "POST",
                 headers: {
-                    'Content-Type': 'application/json'
+                    "Content-Type": "application/json"
                 },
                 body: JSON.stringify(payload)
             })
             .then(response => {
                 if (response.ok) {
-                    document.getElementById('status').style.display = 'block';
-                    document.getElementById('status').textContent = 'Message sent successfully!';
+                    alert("Message sent successfully!");
+                    document.getElementById('messageForm').reset();
                 } else {
-                    throw new Error('Failed to send message');
+                    alert("Failed to send message. Please try again.");
                 }
             })
             .catch(error => {
-                document.getElementById('status').style.display = 'block';
-                document.getElementById('status').textContent = 'Failed to send message.';
-                console.error('Error:', error);
+                console.error("Error:", error);
+                alert("An error occurred. Please try again.");
             });
-
-            document.getElementById('message').value = ''; // Clear the message input
-        }
+        });
     </script>
 </body>
 </html>
