@@ -3,50 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dark Mode Button</title>
-    <style>
-        /* Dark mode styling */
-        body {
-            background-color: #121212;
-            color: #ffffff;
-            font-family: Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
-
-        /* Button styling */
-        button {
-            background-color: #1e88e5;
-            color: #ffffff;
-            border: none;
-            padding: 15px 30px;
-            font-size: 18px;
-            font-weight: bold;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.2s ease;
-        }
-
-        button:hover {
-            background-color: #1565c0;
-            transform: scale(1.05);
-        }
-
-        button:active {
-            background-color: #0d47a1;
-        }
-    </style>
+    <title>Download File</title>
 </head>
 <body>
-    <button onclick="openInNewTab()">nix cfg</button>
-
-    <script>
-        function openInNewTab() {
-            window.open("https://download1479.mediafire.com/w04a5iz0waagjpzgsJUUTPH5Vs7nhOejORoPE9K-gvWT-mCLbeA4yaEOlmdyZhp1VV4yvGPxFMTeJnHYzbLYAbFKB0JC2cFdIuYUuFkls9DhkuD7nDs5vPgZu0EJFd8R-n9gwo8TsZ5QNPS71qoS-S7jfkWWpZJ4rLR2aFg/tbd3kpn51501soe/communty+%281%29+%282%29.cfg", "_blank");
-        }
-    </script>
+    <a href="https://raw.githubusercontent.com/9lvn/evinced.xyz/main/communty.cfg" download>
+        <button style="padding: 15px 30px; font-size: 16px; background-color: #1e88e5; color: white; border: none; border-radius: 8px; cursor: pointer;">
+            Download File
+        </button>
+    </a>
 </body>
 </html>
