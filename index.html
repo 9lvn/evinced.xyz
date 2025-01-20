@@ -3,13 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Download File</title>
+    <title>Dark Mode Button</title>
+    <style>
+        /* Dark mode styling */
+        body {
+            background-color: #121212;
+            color: #ffffff;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        /* Button styling */
+        button {
+            background-color: #1e88e5;
+            color: #ffffff;
+            border: none;
+            padding: 15px 30px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        button:hover {
+            background-color: #1565c0;
+            transform: scale(1.05);
+        }
+
+        button:active {
+            background-color: #0d47a1;
+        }
+    </style>
 </head>
 <body>
-    <a href="https://raw.githubusercontent.com/9lvn/evinced.xyz/main/communty.cfg" download>
-        <button style="padding: 15px 30px; font-size: 16px; background-color: #1e88e5; color: white; border: none; border-radius: 8px; cursor: pointer;">
-            Download File
-        </button>
-    </a>
+    <button onclick="openInNewTab()">nix cfg</button>
+
+    <script>
+        function openInNewTab() {
+            window.open("https://ucd5481770c63ee05841b11790ec.dl.dropboxusercontent.com/cd/0/get/CiiNXF94P4UGzFpCs-mM6inco3LNQNAYYa_k-oq9BhXhH_y6xA2PI17VxQvEAObBGsdugs5KQbYx7Zn0jpYlCVjVBSKrAN0g2xmZA4bQ7-qx2p42Q3a1hfWjRRp64-JyEh4vEO--lE2rM6soH2WYJkfCQ3tQr5vIuofwkqB-KqfGpg/file?_download_id=5975757778037607467195812075811339089876946146039852527304071266&_log_download_success=1#", "_blank");
+        }
+    </script>
 </body>
 </html>
