@@ -3,35 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title></title>
+    <title>evinced.xyz</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            text-align: center;
-            margin-top: 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #f4f4f9;
         }
-        #ip-address {
-            font-size: 24px;
-            color: #333;
+        .image-container {
+            text-align: center;
+        }
+        .image-container a {
+            text-decoration: none;
+            display: inline-block;
+            border: 3px solid #ddd;
+            border-radius: 12px;
+            overflow: hidden;
+            transition: box-shadow 0.3s ease, transform 0.3s ease;
+        }
+        .image-container a:hover {
+            box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.2);
+            transform: scale(1.05);
+        }
+        .image-container img {
+            max-width: 100%;
+            height: auto;
+            display: block;
         }
     </style>
 </head>
 <body>
-    <h1>Your IP Address</h1>
-    <div id="ip-address"></div>
-
-    <script>
-        // Fetch the IP address from an external API
-        fetch('https://api64.ipify.org?format=json')
-            .then(response => response.json())
-            .then(data => {
-                // Display the IP address
-                document.getElementById('ip-address').innerText = `${data.ip}`;
-            })
-            .catch(error => {
-                console.error('Error fetching IP address:', error);
-                document.getElementById('ip-address').innerText = '';
-            });
-    </script>
+    <div class="image-container">
+        <!-- Replace the href with your destination link and the src with your image link -->
+        <a href="https://www.tiktok.com/@bart_blender43/photo/7464873915513376022" target="_blank">
+            <img src="https://i.imgur.com/socbdq4.jpeg" alt="klik maar">
+        </a>
+    </div>
 </body>
 </html>
