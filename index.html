@@ -3,44 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>evinced.xyz</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            background-color: #000000;
-        }
-        .image-container {
-            text-align: center;
-        }
-        .image-container a {
-            text-decoration: none;
-            display: inline-block;
-            border: 3px solid #ddd;
-            border-radius: 12px;
-            overflow: hidden;
-            transition: box-shadow 0.3s ease, transform 0.3s ease;
-        }
-        .image-container a:hover {
-            box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.2);
-            transform: scale(1.05);
-        }
-        .image-container img {
-            max-width: 100%;
-            height: auto;
-            display: block;
-        }
-    </style>
+    <title>Stickman Hook Game</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="image-container">
-        <a href="https://tiktok.com/@bart_blender43/" target="_blank">
-            <img src="https://i.imgur.com/gjCuMze.jpeg" alt="klik maar"
-        </a>
-    </div>
+    <canvas id="gameCanvas" width="800" height="600"></canvas>
+    <script src="script.js"></script>
 </body>
 </html>
