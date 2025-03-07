@@ -4,7 +4,7 @@ const ctx = canvas.getContext('2d');
 const box = 20; // Size of each box in the grid
 let snake = [{ x: 9 * box, y: 9 * box }]; // Initial position of the snake
 let direction = 'RIGHT'; // Initial direction
-let food = { x: Math.floor(Math.random() * 20) * box, y: Math.floor(Math.random() * 20) * box }; // Initial food position
+let food = { x: Math.floor(Math.random() * 30) * box, y: Math.floor(Math.random() * 30) * box }; // Initial food position
 let score = 0;
 
 // Draw everything on the canvas
@@ -32,10 +32,21 @@ function draw() {
     if (direction === 'RIGHT') snakeX += box;
     if (direction === 'DOWN') snakeY += box;
 
+    // Teleportation logic
+    if (snakeY < 0) {
+        snakeY = canvas.height - box; // Teleport to the bottom
+    } else if (snakeY >= canvas.height) {
+        snakeY = 0; // Teleport to the top
+    }
+
     // Check if the snake eats the food
     if (snakeX === food.x && snakeY === food.y) {
         score++;
-        food = { x: Math.floor(Math.random() * 20) * box, y: Math.floor(Math.random() * 20) * box }; // New food position
+        // Random chance to grow by 2 instead of 1
+        if (Math.random() < 0.05) {
+            snake.push({}); // Add an extra segment
+        }
+        food = { x: Math.floor(Math.random() * 30) * box, y: Math.floor(Math.random() * 30) * box }; // New food position
     } else {
         snake.pop(); // Remove the tail
     }
@@ -44,7 +55,7 @@ function draw() {
     const newHead = { x: snakeX, y: snakeY };
 
     // Game over conditions
-    if (snakeX < 0 || snakeY < 0 || snakeX >= canvas.width || snakeY >= canvas.height || collision(newHead, snake)) {
+    if (snakeX < 0 || snakeX >= canvas.width || collision(newHead, snake)) {
         clearInterval(game);
         alert('Game Over! Your score: ' + score);
     }
@@ -63,17 +74,3 @@ function collision(head, array) {
 }
 
 // Control the snake with arrow keys
-document.addEventListener('keydown', (event) => {
-    if (event.key === 'ArrowLeft' && direction !== 'RIGHT') {
-        direction = 'LEFT';
-    } else if (event.key === 'ArrowUp' && direction !== 'DOWN') {
-        direction = 'UP';
-    } else if (event.key === 'ArrowRight' && direction !== 'LEFT') {
-        direction = 'RIGHT';
-    } else if (event.key === 'ArrowDown' && direction !== 'UP') {
-        direction = 'DOWN';
-    }
-});
-
-// Start the game loop
-let game = setInterval(draw, 100);
