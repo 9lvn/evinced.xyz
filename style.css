@@ -13,52 +13,54 @@ body {
 .game-container {
   text-align: center;
   background: rgba(0, 0, 0, 0.8);
-  padding: 20px;
-  border-radius: 15px;
-  box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+  padding: 30px;
+  border-radius: 20px;
+  box-shadow: 0 0 30px rgba(255, 255, 255, 0.1);
 }
 
 h1 {
   font-size: 2.5em;
-  margin-bottom: 10px;
-  color: #00ff00;
-  text-shadow: 0 0 10px #00ff00;
+  margin-bottom: 15px;
+  color: #00ff88;
+  text-shadow: 0 0 15px #00ff88;
 }
 
 .score {
   font-size: 1.5em;
-  margin: 10px 0;
-  color: #00ff00;
+  margin: 15px 0;
+  color: #00ff88;
 }
 
 canvas {
-  border: 2px solid #00ff00;
+  border: 3px solid #00ff88;
   background-color: #000;
-  border-radius: 10px;
-  box-shadow: 0 0 20px rgba(0, 255, 0, 0.5);
+  border-radius: 15px;
+  box-shadow: 0 0 25px rgba(0, 255, 136, 0.5);
 }
 
 .instructions {
-  margin-top: 15px;
+  margin-top: 20px;
   font-size: 0.9em;
   color: #ccc;
 }
 
 button {
-  margin-top: 10px;
-  padding: 10px 20px;
-  font-size: 1em;
+  margin-top: 15px;
+  padding: 12px 25px;
+  font-size: 1.1em;
   color: #fff;
-  background: #00ff00;
+  background: #00ff88;
   border: none;
-  border-radius: 5px;
+  border-radius: 25px;
   cursor: pointer;
-  transition: background 0.3s ease, transform 0.2s ease;
+  transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+  box-shadow: 0 0 15px rgba(0, 255, 136, 0.5);
 }
 
 button:hover {
-  background: #00cc00;
-  transform: scale(1.05);
+  background: #00cc66;
+  transform: scale(1.1);
+  box-shadow: 0 0 25px rgba(0, 255, 136, 0.8);
 }
 
 button:active {
