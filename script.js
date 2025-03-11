@@ -10,17 +10,26 @@ let food = {
   y: Math.floor(Math.random() * 19 + 1) * box,
 };
 let score = 0;
+let game;
 
-// Draw the snake
+// Draw the snake with rounded segments
 function drawSnake() {
-  ctx.fillStyle = "lime";
-  snake.forEach((segment) => ctx.fillRect(segment.x, segment.y, box, box));
+  snake.forEach((segment, index) => {
+    ctx.beginPath();
+    ctx.arc(segment.x + box / 2, segment.y + box / 2, box / 2, 0, Math.PI * 2);
+    ctx.fillStyle = index === 0 ? "green" : "lime"; // Head is green, body is lime
+    ctx.fill();
+    ctx.closePath();
+  });
 }
 
-// Draw the food
+// Draw the food as a circle
 function drawFood() {
+  ctx.beginPath();
+  ctx.arc(food.x + box / 2, food.y + box / 2, box / 2, 0, Math.PI * 2);
   ctx.fillStyle = "red";
-  ctx.fillRect(food.x, food.y, box, box);
+  ctx.fill();
+  ctx.closePath();
 }
 
 // Move the snake
@@ -72,10 +81,27 @@ function moveSnake() {
 // Game over function
 function gameOver() {
   clearInterval(game);
+  ctx.fillStyle = "rgba(255, 0, 0, 0.7)";
+  ctx.fillRect(0, 0, canvasSize, canvasSize);
   ctx.fillStyle = "white";
   ctx.font = "30px Arial";
-  ctx.fillText("Game Over!", canvasSize / 2 - 80, canvasSize / 2);
+  ctx.textAlign = "center";
+  ctx.fillText("Game Over!", canvasSize / 2, canvasSize / 2);
 }
+
+// Restart game
+document.getElementById("restart-btn").addEventListener("click", () => {
+  snake = [{ x: 9 * box, y: 10 * box }];
+  direction = "RIGHT";
+  score = 0;
+  document.getElementById("score").innerText = score;
+  food = {
+    x: Math.floor(Math.random() * 19 + 1) * box,
+    y: Math.floor(Math.random() * 19 + 1) * box,
+  };
+  clearInterval(game);
+  game = setInterval(gameLoop, 100);
+});
 
 // Main game loop
 function gameLoop() {
@@ -104,4 +130,4 @@ document.addEventListener("keydown", (e) => {
 });
 
 // Start the game
-let game = setInterval(gameLoop, 100);
+game = setInterval(gameLoop, 100);
