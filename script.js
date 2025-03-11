@@ -1,13 +1,13 @@
 const canvas = document.getElementById("game-board");
 const ctx = canvas.getContext("2d");
-const box = 20; // Size of each grid box
+const box = 25; // Increased size of each grid box
 const canvasSize = canvas.width;
 
-let snake = [{ x: 9 * box, y: 10 * box }]; // Initial snake position
+let snake = [{ x: 8 * box, y: 8 * box }]; // Initial snake position
 let direction = "RIGHT";
 let food = {
-  x: Math.floor(Math.random() * 19 + 1) * box,
-  y: Math.floor(Math.random() * 19 + 1) * box,
+  x: Math.floor(Math.random() * (canvasSize / box - 2) + 1) * box,
+  y: Math.floor(Math.random() * (canvasSize / box - 2) + 1) * box,
 };
 let score = 0;
 let game;
@@ -17,7 +17,7 @@ function drawSnake() {
   snake.forEach((segment, index) => {
     ctx.beginPath();
     ctx.arc(segment.x + box / 2, segment.y + box / 2, box / 2, 0, Math.PI * 2);
-    ctx.fillStyle = index === 0 ? "green" : "lime"; // Head is green, body is lime
+    ctx.fillStyle = index === 0 ? "#00ff88" : "#00cc66"; // Head is brighter, body is darker
     ctx.fill();
     ctx.closePath();
   });
@@ -27,7 +27,7 @@ function drawSnake() {
 function drawFood() {
   ctx.beginPath();
   ctx.arc(food.x + box / 2, food.y + box / 2, box / 2, 0, Math.PI * 2);
-  ctx.fillStyle = "red";
+  ctx.fillStyle = "#ff4444";
   ctx.fill();
   ctx.closePath();
 }
@@ -70,8 +70,8 @@ function moveSnake() {
     score++;
     document.getElementById("score").innerText = score;
     food = {
-      x: Math.floor(Math.random() * 19 + 1) * box,
-      y: Math.floor(Math.random() * 19 + 1) * box,
+      x: Math.floor(Math.random() * (canvasSize / box - 2) + 1) * box,
+      y: Math.floor(Math.random() * (canvasSize / box - 2) + 1) * box,
     };
   } else {
     snake.pop(); // Remove the tail
@@ -84,23 +84,50 @@ function gameOver() {
   ctx.fillStyle = "rgba(255, 0, 0, 0.7)";
   ctx.fillRect(0, 0, canvasSize, canvasSize);
   ctx.fillStyle = "white";
-  ctx.font = "30px Arial";
+  ctx.font = "35px Arial";
   ctx.textAlign = "center";
   ctx.fillText("Game Over!", canvasSize / 2, canvasSize / 2);
 }
 
 // Restart game
 document.getElementById("restart-btn").addEventListener("click", () => {
-  snake = [{ x: 9 * box, y: 10 * box }];
+  snake = [{ x: 8 * box, y: 8 * box }];
   direction = "RIGHT";
   score = 0;
   document.getElementById("score").innerText = score;
   food = {
-    x: Math.floor(Math.random() * 19 + 1) * box,
-    y: Math.floor(Math.random() * 19 + 1) * box,
+    x: Math.floor(Math.random() * (canvasSize / box - 2) + 1) * box,
+    y: Math.floor(Math.random() * (canvasSize / box - 2) + 1) * box,
   };
   clearInterval(game);
   game = setInterval(gameLoop, 100);
+});
+
+// Handle keyboard input for both arrow keys and WASD
+document.addEventListener("keydown", (e) => {
+  switch (e.key) {
+    // Arrow keys
+    case "ArrowUp":
+    case "w":
+    case "W":
+      if (direction !== "DOWN") direction = "UP";
+      break;
+    case "ArrowDown":
+    case "s":
+    case "S":
+      if (direction !== "UP") direction = "DOWN";
+      break;
+    case "ArrowLeft":
+    case "a":
+    case "A":
+      if (direction !== "RIGHT") direction = "LEFT";
+      break;
+    case "ArrowRight":
+    case "d":
+    case "D":
+      if (direction !== "LEFT") direction = "RIGHT";
+      break;
+  }
 });
 
 // Main game loop
@@ -110,24 +137,6 @@ function gameLoop() {
   drawFood();
   moveSnake();
 }
-
-// Handle keyboard input
-document.addEventListener("keydown", (e) => {
-  switch (e.key) {
-    case "ArrowUp":
-      if (direction !== "DOWN") direction = "UP";
-      break;
-    case "ArrowDown":
-      if (direction !== "UP") direction = "DOWN";
-      break;
-    case "ArrowLeft":
-      if (direction !== "RIGHT") direction = "LEFT";
-      break;
-    case "ArrowRight":
-      if (direction !== "LEFT") direction = "RIGHT";
-      break;
-  }
-});
 
 // Start the game
 game = setInterval(gameLoop, 100);
