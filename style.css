@@ -1,68 +1,10 @@
-/* General Styles */
 body {
-  font-family: 'Arial', sans-serif;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  margin: 0;
-  background: linear-gradient(135deg, #1a1a1a, #333);
-  color: #fff;
+    font-family: Arial, sans-serif;
+    text-align: center;
 }
 
-.game-container {
-  text-align: center;
-  background: rgba(0, 0, 0, 0.8);
-  padding: 30px;
-  border-radius: 20px;
-  box-shadow: 0 0 30px rgba(255, 255, 255, 0.1);
-}
-
-h1 {
-  font-size: 2.5em;
-  margin-bottom: 15px;
-  color: #00ff88;
-  text-shadow: 0 0 15px #00ff88;
-}
-
-.score {
-  font-size: 1.5em;
-  margin: 15px 0;
-  color: #00ff88;
-}
-
-canvas {
-  border: 3px solid #00ff88;
-  background-color: #000;
-  border-radius: 15px;
-  box-shadow: 0 0 25px rgba(0, 255, 136, 0.5);
-}
-
-.instructions {
-  margin-top: 20px;
-  font-size: 0.9em;
-  color: #ccc;
-}
-
-button {
-  margin-top: 15px;
-  padding: 12px 25px;
-  font-size: 1.1em;
-  color: #fff;
-  background: #00ff88;
-  border: none;
-  border-radius: 25px;
-  cursor: pointer;
-  transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
-  box-shadow: 0 0 15px rgba(0, 255, 136, 0.5);
-}
-
-button:hover {
-  background: #00cc66;
-  transform: scale(1.1);
-  box-shadow: 0 0 25px rgba(0, 255, 136, 0.8);
-}
-
-button:active {
-  transform: scale(0.95);
+#ip-address {
+    font-size: 24px;
+    font-weight: bold;
+    color: #00698f;
 }
