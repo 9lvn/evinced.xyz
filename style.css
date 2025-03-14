@@ -1,24 +1,29 @@
+/* General body styling */
 body {
-  font-family: Arial, sans-serif;
-  text-align: center;
-  background-color: #f4f4f9;
-  color: #333;
-  margin: 0;
-  padding: 20px;
+  font-family: Arial, sans-serif; /* Use a clean, sans-serif font */
+  text-align: center; /* Center-align all content */
+  background-color: #f4f4f9; /* Light gray background */
+  color: #333; /* Dark gray text color */
+  margin: 0; /* Remove default margin */
+  padding: 20px; /* Add some padding */
 }
 
+/* Styling for the IP address text */
 #ip-address {
-  font-size: 24px;
-  font-weight: bold;
-  color: #00698f;
-  margin-top: 20px;
+  font-size: 24px; /* Larger font size */
+  font-weight: bold; /* Bold text */
+  color: #00698f; /* Blue color for emphasis */
+  margin-top: 20px; /* Add space above the IP address */
 }
 
+/* Styling for the country flag */
+#country-flag {
+  font-size: 48px; /* Large font size for the flag emoji */
+  margin-top: 10px; /* Add space above the flag */
+}
+
+/* Styling for the loading message */
 .loading {
-  font-size: 18px;
-  color: #555;
-}
-
-.hidden {
-  display: none;
+  font-size: 18px; /* Medium font size */
+  color: #555; /* Gray color for the loading text */
 }
