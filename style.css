@@ -22,13 +22,6 @@ body {
   margin-top: 10px; /* Add space above the flag */
 }
 
-/* Styling for the city */
-#city, #isp {
-  font-size: 20px; /* Medium font size */
-  color: #555; /* Gray color */
-  margin-top: 20px; /* Add space above */
-}
-
 /* Styling for the loading message */
 .loading {
   font-size: 18px; /* Medium font size */
