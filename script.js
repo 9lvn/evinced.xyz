@@ -1,17 +1,16 @@
-window.onload = function() {
-    fetch('https://your-server-url/get-counter')  // Replace with your actual server URL
-        .then(response => response.json())
-        .then(data => {
-            document.getElementById('counter').textContent = data.counter;
-        })
-        .catch(error => {
-            console.error('Error fetching counter:', error);
-            document.getElementById('counter').textContent = "Error loading counter";
-        });
+// This will use Vercel's serverless functions to track visitors
+async function updateVisitorCounter() {
+    try {
+        // Call our Vercel serverless function
+        const response = await fetch('/api/visitors');
+        const data = await response.json();
+        
+        document.getElementById('visitor-counter').textContent = data.count;
+    } catch (error) {
+        console.error('Error fetching visitor count:', error);
+        document.getElementById('visitor-counter').textContent = 'Error';
+    }
+}
 
-    // Send a request to increase the counter on the server
-    fetch('https://your-server-url/increment-counter', {
-        method: 'POST',
-    })
-    .catch(error => console.error('Error updating counter:', error));
-};
+// Update counter on page load
+updateVisitorCounter();
