@@ -1,7 +1,7 @@
 const btn = document.getElementById('btn')
 const output = document.getElementById('output')
 
-const msgs = ['yo', 'wassup', 'this site lowkey goated', 'html css js moment', 'fr fr', 'no cap', 'ur the 🐐', 'clicked lol']
+const msgs = ['n', 'i', 'g', 'g', 'e', 'r']
 
 btn.addEventListener('click', () => {
   const rand = Math.floor(Math.random() * msgs.length)
