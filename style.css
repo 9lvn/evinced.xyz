@@ -1,8 +1,10 @@
+@import url('https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap');
+
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: sans-serif;
+  font-family: 'Fredoka One', cursive;
 }
 
 body {
@@ -11,22 +13,41 @@ body {
   align-items: center;
   justify-content: center;
   height: 100vh;
-  background: #111;
+  background: #000;
   color: #fff;
+  position: relative;
+  overflow: hidden;
+}
+
+/* glowing blue aura effect */
+body::before {
+  content: '';
+  position: absolute;
+  width: 600px;
+  height: 600px;
+  background: rgba(0, 140, 255, 0.2);
+  filter: blur(150px);
+  z-index: -1;
+  border-radius: 50%;
+  top: 20%;
+  left: 20%;
 }
 
 h1 {
   margin-bottom: 20px;
+  font-size: 32px;
+  font-weight: bold;
 }
 
 #box {
   width: 80px;
   height: 80px;
-  background: #0f0;
+  background: #0ff;
   position: absolute;
   border-radius: 10px;
   cursor: pointer;
   transition: all 0.2s ease;
+  box-shadow: 0 0 15px #0ff;
 }
 
 #score,
@@ -39,15 +60,16 @@ button {
   margin-top: 30px;
   padding: 10px 20px;
   font-size: 18px;
-  background: #333;
+  background: #222;
   color: #fff;
   border: none;
   border-radius: 8px;
   cursor: pointer;
+  transition: background 0.3s;
 }
 
 button:hover {
-  background: #555;
+  background: #444;
 }
 
 /* socials in bottom right */
@@ -62,7 +84,7 @@ button:hover {
 .socials-icons a {
   color: #fff;
   font-size: 24px;
-  transition: transform 0.2s ease;
+  transition: transform 0.2s ease, color 0.3s ease;
 }
 
 .socials-icons a:hover {
