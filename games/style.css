@@ -1,155 +1,115 @@
-/* Basic Reset & Body Styling */
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-}
-
+/* General Styles */
 body {
-    font-family: 'Arial', sans-serif; /* Basic font stack */
-    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); /* Vibrant gradient like Poki's bg */
-    color: #333;
-    line-height: 1.6;
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh; /* Ensure footer stays at bottom */
+  margin: 0;
+  font-family: 'Fredoka One', sans-serif;
+  color: #333;
+  background-color: #f9f9f9;
 }
 
 a {
-    text-decoration: none;
-    color: inherit; /* Inherit color from parent */
+  text-decoration: none;
+  color: inherit;
 }
 
-img {
-    max-width: 100%;
-    display: block; /* Remove extra space below images */
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  background-color: #333;
+  color: white;
 }
 
-/* Header Styling */
-.site-header {
-    background-color: #ffffff;
-    padding: 10px 25px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    position: sticky; /* Make header stick on scroll */
-    top: 0;
-    z-index: 1000;
+header .logo {
+  font-size: 24px;
 }
 
-.logo h1 {
-    font-size: 1.8em;
-    font-weight: bold;
-    color: #2c3e50; /* Darker blue/grey */
-    /* If using an image logo:
-       .logo img { height: 40px; width: auto; }
-       .logo h1 { display: none; }
-    */
+header nav ul {
+  list-style: none;
+  display: flex;
+  gap: 15px;
 }
 
-.header-nav a.icon-link {
-    font-size: 1.5em; /* Adjust size as needed */
-    margin-left: 15px;
-    color: #555;
-    transition: color 0.2s ease;
+header nav ul li a {
+  color: white;
+  font-size: 18px;
 }
 
-.header-nav a.icon-link:hover {
-    color: #007bff; /* Highlight color on hover */
+.hero {
+  text-align: center;
+  padding: 100px 20px;
+  background: linear-gradient(to bottom, #6a11cb, #2575fc);
+  color: white;
 }
 
-
-/* Main Content Area & Game Grid */
-.game-grid-container {
-    flex-grow: 1; /* Allow main content to fill space */
-    padding: 25px;
-    max-width: 1400px; /* Limit max width */
-    margin: 0 auto; /* Center the grid container */
-    width: 100%;
+.hero h1 {
+  font-size: 48px;
+  margin-bottom: 20px;
 }
 
-.game-grid-container h2 {
-    color: #ffffff; /* White text for title */
-    margin-bottom: 20px;
-    text-align: center;
-    font-size: 1.8em;
-    text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+.hero p {
+  font-size: 20px;
+  margin-bottom: 30px;
 }
 
-.game-grid {
-    display: grid;
-    /* Responsive grid: Adjust minmax value for thumbnail size */
-    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-    gap: 20px; /* Spacing between items */
+.hero .btn {
+  padding: 10px 20px;
+  background-color: white;
+  color: #333;
+  border-radius: 5px;
+  font-size: 18px;
 }
 
-.game-item {
-    display: block;
-    border-radius: 12px; /* Rounded corners */
-    overflow: hidden; /* Ensure image stays within bounds */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-    background-color: #eee; /* Placeholder bg if image is slow */
-    aspect-ratio: 1 / 1; /* Make items square */
+.games-section, .about-section, .contact-section {
+  padding: 50px 20px;
+  text-align: center;
 }
 
-.game-item img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover; /* Cover the square area, cropping if needed */
-    vertical-align: top; /* Align image to top */
+.games-container {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
 }
 
-.game-item:hover {
-    transform: scale(1.05); /* Slight zoom effect on hover */
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25);
+.game-card {
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  width: 300px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* Footer Styling */
-.site-footer {
-    background-color: rgba(0, 0, 0, 0.1); /* Semi-transparent dark */
-    color: #ffffff;
-    text-align: center;
-    padding: 15px;
-    margin-top: auto; /* Pushes footer to bottom */
-    font-size: 0.9em;
+.game-card h3 {
+  font-size: 22px;
+  margin-bottom: 10px;
 }
 
-
-/* Responsive Adjustments */
-@media (max-width: 768px) {
-    .game-grid {
-        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-        gap: 15px;
-    }
-    .site-header {
-        padding: 8px 15px;
-    }
-    .logo h1 {
-        font-size: 1.5em;
-    }
-    .game-grid-container {
-        padding: 15px;
-    }
-     .game-grid-container h2 {
-        font-size: 1.5em;
-     }
+.game-card p {
+  font-size: 16px;
+  margin-bottom: 20px;
 }
 
-@media (max-width: 480px) {
-    .game-grid {
-        grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
-        gap: 10px;
-    }
-    .logo h1 {
-        font-size: 1.3em;
-    }
-     .header-nav a.icon-link {
-        font-size: 1.3em;
-        margin-left: 10px;
-    }
-    .game-grid-container h2 {
-        font-size: 1.3em;
-     }
+.game-card .btn {
+  padding: 10px 15px;
+  background-color: #2575fc;
+  color: white;
+  border-radius: 5px;
+}
+
+footer {
+  text-align: center;
+  padding: 20px;
+  background-color: #333;
+  color: white;
+}
+
+.social-icons a {
+  font-size: 24px;
+  margin: 0 10px;
+  color: #333;
+}
+
+.social-icons a:hover {
+  color: #2575fc;
 }
