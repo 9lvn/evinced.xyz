@@ -4,7 +4,7 @@ window.onload = function() {
 };
 
 function fetchRandomKey() {
-  const keyUrl = 'https://raw.githubusercontent.com/9lvn/krnl/refs/heads/main/key';
+  const keyUrl = 'https://raw.githubusercontent.com/9lvn/krnl/refs/heads/main/keye';
   
   fetch(keyUrl)
     .then(response => response.text()) 
