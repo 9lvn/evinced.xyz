@@ -47,14 +47,14 @@ body {
 }
 
 .key-box {
-  font-size: 2rem; /* Larger text */
-  padding: 2rem; /* Larger padding */
+  font-size: 1.5rem; /* Adjusted font size */
+  padding: 1rem; /* Adjusted padding */
   border: none;
   border-radius: 8px;
   background-color: #333;
   color: #fff;
-  width: 400px; /* Wider box */
-  height: 60px; /* Taller box */
+  width: 500px; /* Longer and thinner width */
+  height: 40px; /* Shorter height */
   text-align: center;
   font-family: monospace;
   box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
