@@ -1,39 +1,28 @@
-// Function to generate a random captcha text
-function generateCaptcha() {
-    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    let captcha = '';
-    for (let i = 0; i < 6; i++) {
-        captcha += characters.charAt(Math.floor(Math.random() * characters.length));
-    }
-    return captcha;
-}
+window.onload = function() {
+  fetchRandomKey();
+};
 
-// Function to fetch a random string from GitHub
-async function getRandomString() {
-    try {
-        const response = await fetch('https://raw.githubusercontent.com/9lvn/krnl/refs/heads/main/keys');
-        const data = await response.text();
-        const strings = data.split('\n');
-        const randomString = strings[Math.floor(Math.random() * strings.length)];
-        return randomString;
-    } catch (error) {
-        console.error('Error fetching random string:', error);
-        return 'Error fetching string.';
-    }
-}
-
-// When the page loads, generate a captcha
-document.addEventListener('DOMContentLoaded', () => {
-    const captchaText = generateCaptcha();
-    document.getElementById('captcha-text').textContent = captchaText;
-    
-    document.getElementById('verify-btn').addEventListener('click', async () => {
-        const userInput = document.getElementById('captcha-input').value;
-        if (userInput === captchaText) {
-            const randomString = await getRandomString();
-            document.getElementById('result').textContent = `Success! Random string: ${randomString}`;
-        } else {
-            document.getElementById('result').textContent = 'Captcha incorrect. Try again.';
-        }
+function fetchRandomKey() {
+  // URL to the raw keys file
+  const keyUrl = 'https://raw.githubusercontent.com/9lvn/krnl/refs/heads/main/keys';
+  
+  fetch(keyUrl)
+    .then(response => response.text())
+    .then(keysData => {
+      // Split the data into an array by line
+      const keysArray = keysData.split('\n');
+      
+      // Filter out any empty strings
+      const filteredKeys = keysArray.filter(key => key.trim() !== '');
+      
+      // Get a random key
+      const randomKey = filteredKeys[Math.floor(Math.random() * filteredKeys.length)];
+      
+      // Set the value of the key in the textbox
+      document.getElementById('key-box').value = randomKey;
+    })
+    .catch(error => {
+      console.error('Error fetching the key:', error);
+      document.getElementById('key-box').value = 'Error loading key';
     });
-});
+}
