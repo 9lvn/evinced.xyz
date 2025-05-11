@@ -1,0 +1,128 @@
+body {
+  margin: 0;
+  padding: 0;
+  background: #111;
+  color: #fff;
+  font-family: monospace;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  overflow: hidden;
+  position: relative;
+}
+
+/* 🌈 Glowing animated background */
+.animated-glow {
+  position: absolute;
+  width: 1000px;
+  height: 1000px;
+  background: radial-gradient(circle at center, #000000, #808080); /* Black to Grey gradient */
+  filter: blur(160px);
+  opacity: 0.5;
+  animation: moveHue 12s ease-in-out infinite alternate;
+  z-index: 0;
+  border-radius: 50%;
+}
+
+@keyframes moveHue {
+  0% {
+    transform: translate(-20%, -10%) scale(1);
+    background: radial-gradient(circle at 30% 70%, #000000, #808080); /* Black to Grey gradient */
+  }
+  50% {
+    transform: translate(10%, 5%) scale(1.1);
+    background: radial-gradient(circle at 60% 40%, #333333, #808080); /* Darker Grey to Grey */
+  }
+  100% {
+    transform: translate(-15%, 10%) scale(1);
+    background: radial-gradient(circle at 50% 60%, #000000, #666666); /* Black to Light Grey */
+  }
+}
+
+.container {
+  text-align: center;
+  z-index: 1;
+  position: relative;
+}
+
+h1 {
+  font-size: 10rem;
+  margin: 0;
+  color: #ff4c4c;
+}
+
+p {
+  font-size: 1.5rem;
+  margin: 1rem 0;
+}
+
+.back-link {
+  color: #00ffff;
+  text-decoration: none;
+  font-size: 1.2rem;
+  border: 2px solid #00ffff;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  transition: 0.3s;
+}
+
+.back-link:hover {
+  background: #00ffff;
+  color: #111;
+}
+
+/* Additional Website Styling */
+header {
+  background-color: #222;
+  color: #fff;
+  padding: 20px;
+  text-align: center;
+  font-size: 1.5rem;
+  position: relative;
+  z-index: 1;
+}
+
+header h1 {
+  margin: 0;
+  font-size: 3rem;
+}
+
+nav {
+  margin-top: 10px;
+}
+
+nav a {
+  color: #fff;
+  margin: 0 15px;
+  text-decoration: none;
+  font-size: 1.2rem;
+  transition: 0.3s;
+}
+
+nav a:hover {
+  color: #00ffff;
+}
+
+.main-content {
+  text-align: center;
+  margin: 20px;
+  color: #ccc;
+  z-index: 1;
+}
+
+footer {
+  background-color: #222;
+  color: #fff;
+  text-align: center;
+  padding: 15px;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  z-index: 1;
+}
+
+footer p {
+  margin: 0;
+  font-size: 1rem;
+}
