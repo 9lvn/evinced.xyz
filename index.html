@@ -55,6 +55,7 @@
       </div>
       <div class="backdrop-blur-md bg-black/60 border border-t-0 border-white/20 rounded-b-xl p-4 flex flex-col items-center space-y-3">
         <img 
+          id="spotify-now-playing"
           src="https://spotify-github-profile.kittinanx.com/api/view?uid=31trrpg6ws3silz65xh5skdo7z44&cover_image=true&theme=novatorem&show_offline=false&background_color=121212&interchange=false&bar_color=53b14f&bar_color_cover=false" 
           alt="Now Playing on Spotify" 
           class="rounded-xl shadow-md w-full max-w-sm"
@@ -62,5 +63,15 @@
       </div>
     </div>
   </div>
+
+  <script>
+    const spotifyImg = document.getElementById('spotify-now-playing');
+    const baseSrc = "https://spotify-github-profile.kittinanx.com/api/view?uid=31trrpg6ws3silz65xh5skdo7z44&cover_image=true&theme=novatorem&show_offline=false&background_color=121212&interchange=false&bar_color=53b14f&bar_color_cover=false";
+
+    setInterval(() => {
+      const timestamp = new Date().getTime();
+      spotifyImg.src = `${baseSrc}&_=${timestamp}`;
+    }, 4000);
+  </script>
 </body>
 </html>
