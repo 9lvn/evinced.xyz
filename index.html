@@ -3,55 +3,76 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>hamstrr</title>
+  <title>evinced</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    body::before {
-      content: "";
-      background: url('https://r2.guns.lol/bb977a5d-03e1-4f66-8320-1e4675284a60.mp4') no-repeat center center fixed;
-      background-size: cover;
+    /* Video background styling */
+    #bg-video {
       position: fixed;
       top: 0;
       left: 0;
-      height: 100%;
-      width: 100%;
+      min-width: 100%;
+      min-height: 100%;
+      object-fit: cover;
       z-index: -2;
     }
-    body::after {
-      content: "";
-      background: rgba(0, 0, 0, 0.7);
+
+    /* Dark overlay */
+    .video-overlay {
       position: fixed;
       top: 0;
       left: 0;
       height: 100%;
       width: 100%;
+      background: rgba(0, 0, 0, 0.7);
       z-index: -1;
     }
   </style>
 </head>
 <body class="flex flex-col items-center justify-center min-h-screen px-4">
 
+  <!-- Background Video -->
+  <video id="bg-video" autoplay muted loop playsinline>
+    <source src="https://r2.guns.lol/bb977a5d-03e1-4f66-8320-1e4675284a60.mp4" type="video/mp4" />
+    Your browser does not support the video tag.
+  </video>
+
+  <!-- Dark overlay -->
+  <div class="video-overlay"></div>
+
+  <!-- Main content -->
   <div class="backdrop-blur-md bg-white/10 border border-white/30 rounded-2xl p-8 flex flex-col items-center shadow-lg w-full max-w-sm">
 
-    <img src="https://r2.guns.lol/6bc8374c-3b46-4c10-a42e-2c8c918a96aa.webp" alt="Avatar" class="w-24 h-24 rounded-full shadow-lg border-2 border-white mb-4" />
+    <img src="https://i.imgur.com/qtZWhPV.gif" alt="Avatar" class="w-24 h-24 rounded-full shadow-lg border-2 border-white mb-4" />
 
-    <h1 class="text-white text-3xl font-bold mb-6">hamstrr</h1>
+    <h1 class="text-white text-3xl font-bold mb-6">evinced</h1>
 
     <div class="backdrop-blur-md bg-black/60 border border-white/20 rounded-xl px-6 py-3 shadow-md flex justify-center space-x-4">
-      <a href="https://last.fm/user/Hamstr01" aria-label="Last.fm" class="hover:opacity-80">
+      <a href="https://last.fm/user/imprion" aria-label="Last.fm" class="hover:opacity-80">
         <img src="https://i.imgur.com/ahkmc0h.png" alt="Last.fm" class="w-8 h-8" />
       </a>
-      <a href="https://steamcommunity.com/id/hamstrr" aria-label="Steam" class="hover:opacity-80">
+      <a href="https://steamcommunity.com/id/imprion" aria-label="Steam" class="hover:opacity-80">
         <img src="https://i.imgur.com/ytL2ZKn.png" alt="Steam" class="w-8 h-8" />
       </a>
-      <a href="https://www.tiktok.com/@hamstrrrrrr" aria-label="TikTok" class="hover:opacity-80">
+      <a href="https://www.tiktok.com/@imprion" aria-label="TikTok" class="hover:opacity-80">
         <img src="https://i.imgur.com/qcciIUp.png" alt="TikTok" class="w-8 h-8" />
       </a>
-      <a href="https://roblox.com/users/2746624137/" aria-label="Roblox" class="hover:opacity-80">
+      <a href="https://roblox.com/users/1002147850/" aria-label="Roblox" class="hover:opacity-80">
         <img src="https://i.imgur.com/5hdivr2.png" alt="Roblox" class="w-8 h-8" />
       </a>
-      <a href="https://www.discord.com/users/1262468528250818590" aria-label="Discord" class="hover:opacity-80">
+      <a href="https://www.discord.com/users/895693829338972211" aria-label="Discord" class="hover:opacity-80">
         <img src="https://i.imgur.com/Vk6eoDV.png" alt="Discord" class="w-8 h-8" />
+      </a>
+    </div>
+
+    <!-- Spotify Now Playing Badge -->
+    <div class="mt-6 w-full flex justify-center">
+      <a href="https://github.com/kittinan/spotify-github-profile" target="_blank" rel="noopener noreferrer">
+        <img 
+          src="https://spotify-github-profile.kittinanx.com/api/view?uid=31trrpg6ws3silz65xh5skdo7z44&cover_image=true&theme=novatorem&show_offline=false&background_color=121212&interchange=false&bar_color=53b14f&bar_color_cover=false" 
+          alt="Now Playing on Spotify" 
+          class="rounded-xl shadow-md w-full max-w-sm"
+        />
       </a>
     </div>
 
