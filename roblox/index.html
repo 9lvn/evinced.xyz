@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>roblox clothing template downloader</title>
+<title>roblox clothing template viewer</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
   * { box-sizing: border-box; margin:0; padding:0; }
@@ -11,7 +11,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 100vh;
+    min-height: 100vh;
     overflow: hidden;
     position: relative;
     background: #111;
@@ -75,10 +75,27 @@
     font-size:1rem;
     transition: all 0.2s;
     box-shadow: 0 0 15px rgba(0,204,255,0.5);
+    margin-bottom: 1rem;
   }
   button:hover {
     background:#00e0ff;
     transform: scale(1.03);
+  }
+  .preview {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .preview img {
+    max-width: 250px;
+    border-radius: 12px;
+    border: 2px solid #00ccff;
+    box-shadow: 0 0 10px rgba(0,204,255,0.5);
+  }
+  .preview p {
+    font-size: 0.9rem;
+    color: #aaa;
   }
 </style>
 </head>
@@ -87,37 +104,29 @@
 <div class="container">
   <h1>roblox clothing template</h1>
   <input type="text" id="catalogInput" placeholder="paste catalog id or url">
-  <button onclick="downloadTemplate()">download png</button>
+  <button onclick="showTemplate()">show template</button>
+  <div class="preview" id="preview"></div>
 </div>
 
 <script>
-async function downloadTemplate() {
-  let input = document.getElementById('catalogInput').value.trim();
+function showTemplate() {
+  const input = document.getElementById('catalogInput').value.trim();
   if (!input) return alert("drop an id/url twin");
 
   const match = input.match(/(\d+)/);
   if (!match) return alert("no id found fr");
   const id = match[1];
 
-  const url = `https://thecsdev.com/tool/roblox-tools/api-s/rcd-image/?asset_id=${id}`;
+  const imgUrl = `https://thecsdev.com/tool/roblox-tools/api-s/rcd-image/?asset_id=${id}`;
 
-  try {
-    // fetch image as blob
-    const res = await fetch(url);
-    if (!res.ok) throw new Error("couldn't fetch image");
-    const blob = await res.blob();
+  // detect if mobile
+  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  const instruction = isMobile ? "long tap to save" : "right click to save";
 
-    // create a temporary link and click it
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(blob);
-    link.download = `roblox_template_${id}.png`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  } catch (err) {
-    console.error(err);
-    alert("failed to download template fr");
-  }
+  document.getElementById('preview').innerHTML = `
+    <img src="${imgUrl}" alt="template">
+    <p>${instruction}</p>
+  `;
 }
 </script>
 </body>
