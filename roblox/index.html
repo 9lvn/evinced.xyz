@@ -69,7 +69,7 @@
   </div>
 
   <script>
-    function downloadTemplate() {
+    async function downloadTemplate() {
       const id = document.getElementById('clothingId').value.trim();
       if (!id) {
         alert('Please enter a valid clothing ID!');
@@ -78,19 +78,32 @@
 
       const url = `https://thecsdev.com/tool/roblox-tools/api-s/rcd-image/?asset_id=${id}`;
 
-      // Show preview
-      const preview = document.getElementById('preview');
-      const templateImg = document.getElementById('templateImg');
-      templateImg.src = url;
-      preview.style.display = 'block';
+      try {
+        const response = await fetch(url);
+        if (!response.ok) throw new Error('Failed to fetch template.');
 
-      // Create a hidden link for downloading
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = `clothing_${id}.png`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+        const blob = await response.blob();
+        const objectUrl = URL.createObjectURL(blob);
+
+        // Show preview
+        const preview = document.getElementById('preview');
+        const templateImg = document.getElementById('templateImg');
+        templateImg.src = objectUrl;
+        preview.style.display = 'block';
+
+        // Force download
+        const link = document.createElement('a');
+        link.href = objectUrl;
+        link.download = `clothing_${id}.png`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        // Revoke object URL after download
+        URL.revokeObjectURL(objectUrl);
+      } catch (error) {
+        alert('Error downloading template: ' + error.message);
+      }
     }
   </script>
 </body>
