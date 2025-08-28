@@ -111,14 +111,14 @@ button:hover {
 function showTemplate() {
   const input = document.getElementById('catalogInput').value.trim();
   if (!input) return alert("drop an id/url twin");
+
   const match = input.match(/(\d+)/);
   if (!match) return alert("no id found fr");
+
   const id = match[1];
-  const proxy = "https://corsproxy.io/?";
-  const imgUrl = `https://thecsdev.com/tool/roblox-tools/api-s/rcd-image/?asset_id=${id}`;
-  const finalUrl = proxy + encodeURIComponent(imgUrl);
+  const embedUrl = `https://thecsdev.com/tool/roblox-tools/api-s/rcd-image/?asset_id=${id}`;
   const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-  const instruction = isMobile ? "long tap to save" : "right click to save";
+  const instruction = isMobile ? "long tap to interact
   document.getElementById('preview').innerHTML = `
     <img src="${finalUrl}" alt="template">
     <p>${instruction}</p>
