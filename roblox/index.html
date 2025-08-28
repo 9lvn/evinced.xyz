@@ -6,75 +6,115 @@
   <title>Roblox Clothing Template Downloader</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background: #f5f6fa;
+      margin: 0;
+      padding: 0;
+      font-family: 'Arial', sans-serif;
       display: flex;
-      flex-direction: column;
       align-items: center;
       justify-content: center;
       height: 100vh;
+      overflow: hidden;
+      position: relative;
+      background: #111;
+      color: #fff;
     }
+
+    .animated-glow {
+      position: absolute;
+      width: 1000px;
+      height: 1000px;
+      background: radial-gradient(circle at center, #000000, #808080);
+      filter: blur(160px);
+      opacity: 0.5;
+      animation: moveHue 12s ease-in-out infinite alternate;
+      z-index: 0;
+      border-radius: 50%;
+    }
+
+    @keyframes moveHue {
+      0% {
+        transform: translate(-20%, -10%) scale(1);
+        background: radial-gradient(circle at center, #000000, #808080);
+      }
+      50% {
+        transform: translate(10%, 5%) scale(1.1);
+        background: radial-gradient(circle at center, #333333, #808080);
+      }
+      100% {
+        transform: translate(-15%, 10%) scale(1);
+        background: radial-gradient(circle at center, #000000, #666666);
+      }
+    }
+
     .container {
-      background: white;
-      padding: 20px 30px;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
       text-align: center;
-      max-width: 90%;
+      z-index: 1;
+      position: relative;
     }
-    h1 {
-      font-size: 20px;
-      margin-bottom: 15px;
-    }
-    input {
-      padding: 10px;
-      font-size: 16px;
-      width: 250px;
-      border: 1px solid #ccc;
+
+    .key-box {
+      font-size: 1.2rem;
+      padding: 0.5rem 1rem;
+      border: none;
       border-radius: 8px;
-      margin-bottom: 15px;
+      background-color: #333;
+      color: #fff;
+      width: 300px;
+      height: 40px;
+      text-align: center;
+      font-family: monospace;
+      box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
+      z-index: 1;
     }
+
     button {
-      padding: 10px 18px;
-      font-size: 16px;
+      margin-top: 10px;
+      padding: 10px 20px;
+      font-size: 1rem;
       background: #007bff;
-      color: white;
       border: none;
       border-radius: 8px;
       cursor: pointer;
+      color: #fff;
+      box-shadow: 0 0 10px rgba(0, 123, 255, 0.6);
       transition: background 0.3s;
     }
+
     button:hover {
       background: #0056b3;
     }
+
     .preview {
-      margin-top: 15px;
+      margin-top: 20px;
       display: none;
     }
+
     img {
-      max-width: 100%;
-      border: 1px solid #ccc;
+      max-width: 300px;
       border-radius: 8px;
+      margin-top: 10px;
+      border: 2px solid #fff;
+      box-shadow: 0 0 20px rgba(0, 255, 255, 0.6);
     }
   </style>
 </head>
 <body>
+  <div class="animated-glow"></div>
+
   <div class="container">
     <h1>Roblox Clothing Template Downloader</h1>
-    <input type="text" id="id-input" placeholder="Enter Catalog Item ID">
+    <input type="text" id="id-input" class="key-box" placeholder="Enter Catalog Item ID">
     <br>
     <button id="download-button">Get Template</button>
     <div class="preview" id="preview">
-      <p>Right-click the image below and choose <strong>Save image as...</strong> or use the generated download link:</p>
+      <p>Template:</p>
       <img id="templateImg" src="" alt="Template Preview">
-      <div id="download-link"></div>
     </div>
   </div>
 
   <script>
     const idInput = document.getElementById('id-input');
     const downloadButton = document.getElementById('download-button');
-    const downloadLinkContainer = document.getElementById('download-link');
 
     function proxy(itemId) {
       return `https://api.coolpixels.net/roblox/assetdelivery/${itemId}/info`;
@@ -86,7 +126,6 @@
 
     async function getAssetIdFromItemId(itemId) {
       const url = proxy(itemId);
-
       try {
         const response = await fetch(url);
         const data = await response.json();
@@ -128,14 +167,13 @@
       templateImg.src = objectUrl;
       preview.style.display = 'block';
 
-      // Create download link
-      downloadLinkContainer.innerHTML = '';
+      // Automatically download
       const link = document.createElement('a');
-      link.innerText = `Download Template (${assetId}.png)`;
-      link.download = `${assetId}.png`;
       link.href = objectUrl;
-      link.className = 'btn-download';
-      downloadLinkContainer.appendChild(link);
+      link.download = `${assetId}.png`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
     }
 
     downloadButton.addEventListener('click', handleDownload);
