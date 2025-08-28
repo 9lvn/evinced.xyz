@@ -38,40 +38,27 @@
 <body>
   <h1>roblox clothing template downloader</h1>
   <input type="text" id="assetInput" placeholder="drop id or catalog url">
-  <button onclick="getTemplate()">fetch template</button>
+  <button onclick="showTemplate()">fetch template</button>
   <div id="preview"></div>
 
   <script>
-    async function getTemplate() {
+    function showTemplate() {
       let input = document.getElementById('assetInput').value.trim();
       if (!input) return alert("drop an id/url twin");
 
-      // if user pasted full url, extract numbers
+      // pull id from url or just use the number
       const match = input.match(/(\d+)/);
       if (!match) return alert("no id found fr");
       const id = match[1];
 
-      try {
-        const url = `https://assetdelivery.roblox.com/v1/asset/?id=${id}`;
-        const res = await fetch(url);
+      const imgUrl = `https://assetdelivery.roblox.com/v1/asset/?id=${id}`;
 
-        if (!res.ok) {
-          alert("couldn’t pull asset (maybe private)");
-          return;
-        }
-
-        const imgUrl = res.url;
-
-        document.getElementById("preview").innerHTML = `
-          <a href="${imgUrl}" target="_blank" download>
-            <img src="${imgUrl}" alt="template">
-          </a>
-          <p>click img to save</p>
-        `;
-      } catch (err) {
-        console.error(err);
-        alert("error pulling template");
-      }
+      document.getElementById("preview").innerHTML = `
+        <a href="${imgUrl}" target="_blank" download>
+          <img src="${imgUrl}" alt="template">
+        </a>
+        <p>click img to save</p>
+      `;
     }
   </script>
 </body>
