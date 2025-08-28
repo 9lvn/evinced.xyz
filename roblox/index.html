@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-    <title>Roblox Image Downloader</title>
+    <title>Roblox Asset Downloader</title>
     <style>
         body {
             font-family: sans-serif;
@@ -30,9 +31,9 @@
     <h1>Roblox Asset Downloader</h1>
 
     <form id="inputForm">
-        <label for="assetId">Enter Asset ID:</label>
-        <input type="number" id="assetId" name="assetId">
-        <button type="button" onclick="downloadImage()">Download Image</button>
+        <label for="id-input">Enter Item ID:</label>
+        <input type="number" id="id-input" name="assetId">
+        <button type="button" id="download-button" onclick="download()">Download Image</button>
     </form>
 
     <div id="imageContainer">
@@ -42,22 +43,92 @@
     </div>
 
     <script>
-        function downloadImage() {
-            const assetId = document.getElementById('assetId').value;
-            const imageUrl = `https://thecsdev.com/tool/roblox-tools/api-s/rcd-image/?asset_id=${assetId}`;
-            const robloxImage = document.getElementById('robloxImage');
-            const errorMessage = document.getElementById('errorMessage');
+        const idInput = document.getElementById('id-input');
+        const downloadButton = document.getElementById('download-button');
+        //const downloadLink = document.getElementById('download-link'); // This is created dynamically now
 
-            robloxImage.onload = () => {
-                errorMessage.style.display = 'none'; // Hide error message if loaded successfully
-            };
+        function proxy(itemId) {
+            return `https://api.coolpixels.net/roblox/assetdelivery/${itemId}/info`;
+        }
 
-            robloxImage.onerror = () => {
-                robloxImage.src = ''; // Clear the image
-                errorMessage.style.display = 'block'; // Show error message
-            };
+        function createDownloadUrl(itemId) {
+            return `https://api.coolpixels.net/roblox/assetdelivery/${itemId}`;
+        }
 
-            robloxImage.src = imageUrl;
+        async function getAssetIdFromItemId(itemId) {
+            const url = proxy(itemId);
+
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                const xmlText = data.content;
+                const parser = new DOMParser();
+                const xmlDoc = parser.parseFromString(xmlText, 'text/xml');
+                const urlNode = xmlDoc.querySelector(
+                    'roblox Item Properties Content url'
+                );
+                const urlValue = urlNode.textContent;
+                const assetId = urlValue.split('=')[1];
+
+                return assetId;
+            } catch (error) {
+                console.error('Error retrieving asset ID:', error);
+                return null;
+            }
+        }
+
+        async function blobify(originalUrl) {
+            // fetch data
+            const response = await fetch(originalUrl);
+            const data = await response.blob();
+
+            // create blob
+            const blob = new Blob([data], {
+                type: response.headers.get('content-type')
+            });
+
+            // return
+            return URL.createObjectURL(blob);
+        }
+
+        async function download() {
+            let itemId = idInput.value;
+            const assetIdPromise = getAssetIdFromItemId(itemId); // Start this immediately
+
+            assetIdPromise.then(async (assetId) => {
+
+                if (assetId == null) {
+                    alert("Could not retrieve asset ID.  Check the Item ID.");  // Simple error message
+                    return;
+                }
+
+                // add download link
+                const downloadLink = document.createElement('a');
+
+                downloadLink.innerText = `download ${assetId}`;
+                downloadLink.download = `${assetId}.png`;
+                downloadLink.target = '_blank';  // Important to set this *before* setting href
+
+                try {
+                    downloadLink.href = await blobify(createDownloadUrl(assetId));  // Await the blob URL
+                } catch (error) {
+                    console.error("Error creating blob URL:", error);
+                    alert("Error creating download link. Check the Item ID and try again.");
+                    return;
+                }
+
+                downloadLink.onclick = () => {
+                    downloadLink.remove(); // Clean up the link after it's clicked.
+                };
+
+                // add the link to the body
+                document.body.appendChild(downloadLink);
+
+                // Programmatically trigger the download (optional):
+                downloadLink.click();
+            });
+
+
         }
     </script>
 
