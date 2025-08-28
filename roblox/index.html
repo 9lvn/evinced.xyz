@@ -90,29 +90,6 @@
     background:#00e0ff;
     transform: scale(1.03);
   }
-
-  .preview {
-    margin-top:1.5rem;
-    display:flex;
-    justify-content:center;
-    flex-direction:column;
-    align-items:center;
-    gap:0.7rem;
-  }
-
-  .preview img {
-    max-width:250px;
-    border-radius:12px;
-    border:2px solid #00ccff;
-    box-shadow: 0 0 10px rgba(0,204,255,0.5);
-    transition: transform 0.2s;
-    cursor:pointer;
-  }
-
-  .preview img:hover { transform: scale(1.05); }
-
-  .preview p { font-size:0.9rem; color:#aaa; }
-  a { text-decoration:none; }
 </style>
 </head>
 <body>
@@ -120,12 +97,11 @@
 <div class="container">
   <h1>roblox clothing template</h1>
   <input type="text" id="catalogInput" placeholder="paste catalog id or url">
-  <button onclick="showTemplate()">fetch png</button>
-  <div class="preview" id="preview"></div>
+  <button onclick="downloadTemplate()">download png</button>
 </div>
 
 <script>
-function showTemplate() {
+function downloadTemplate() {
   let input = document.getElementById('catalogInput').value.trim();
   if (!input) return alert("drop an id/url twin");
 
@@ -134,13 +110,12 @@ function showTemplate() {
   const id = match[1];
 
   const imgUrl = `https://thecsdev.com/tool/roblox-tools/api-s/rcd-image/?asset_id=${id}`;
-
-  document.getElementById("preview").innerHTML = `
-    <a href="${imgUrl}" target="_blank" download>
-      <img src="${imgUrl}" alt="template">
-    </a>
-    <p>click image to save</p>
-  `;
+  const link = document.createElement('a');
+  link.href = imgUrl;
+  link.download = `roblox_template_${id}.png`;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
 }
 </script>
 </body>
