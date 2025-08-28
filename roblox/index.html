@@ -1,98 +1,55 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Roblox Clothing Template</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f5f6fa;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-    }
-    .container {
-      background: white;
-      padding: 20px 30px;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      text-align: center;
-    }
-    h1 {
-      font-size: 20px;
-      margin-bottom: 15px;
-    }
-    input {
-      padding: 10px;
-      font-size: 16px;
-      width: 250px;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      margin-bottom: 15px;
-    }
-    button {
-      padding: 10px 18px;
-      font-size: 16px;
-      background: #007bff;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: background 0.3s;
-    }
-    button:hover {
-      background: #0056b3;
-    }
-    .preview {
-      margin-top: 15px;
-      display: none;
-    }
-    img {
-      max-width: 250px;
-      margin-top: 10px;
-    }
-  </style>
+    <title>Roblox Asset Downloader</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 50px;
+        }
+        input[type="text"] {
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            width: 300px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #3e8e41;
+        }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <h1>Roblox Clothing Template Downloader</h1>
-    <input type="text" id="clothingId" placeholder="Enter Clothing ID">
-    <br>
-    <button onclick="downloadTemplate()">Download Template</button>
-    <div class="preview" id="preview">
-      <p>Template Preview:</p>
-      <img id="templateImg" src="" alt="Template Preview">
-    </div>
-  </div>
+    <h1>Enter Roblox Asset ID</h1>
+    <input type="text" id="assetId" placeholder="Enter Asset ID">
+    <button onclick="downloadImage()">Download Image</button>
 
-  <script>
-  function downloadTemplate() {
-    const id = document.getElementById('clothingId').value.trim();
-    if (!id) {
-      alert('Please enter a valid clothing ID!');
-      return;
-    }
+    <script>
+        function downloadImage() {
+            const assetId = document.getElementById('assetId').value;
+            const imageUrl = `https://thecsdev.com/tool/roblox-tools/api-s/rcd-image/?asset_id=${assetId}`;
 
-    const url = `https://thecsdev.com/tool/roblox-tools/api-s/rcd-image/?asset_id=${id}`;
+            // Create a temporary link element
+            const link = document.createElement('a');
+            link.href = imageUrl;
+            link.download = `asset_${assetId}.png`; // Suggest a filename
 
-    // Show preview
-    const preview = document.getElementById('preview');
-    const templateImg = document.getElementById('templateImg');
-    templateImg.src = url;
-    preview.style.display = 'block';
-
-    // Force direct download (no fetch, avoids CORS)
-    const link = document.createElement('a');
-    link.href = url;
-    link.setAttribute('download', `clothing_${id}.png`);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  }
-</script>
-
+            // Programmatically click the link to trigger the download
+            document.body.appendChild(link); // Required for Firefox
+            link.click();
+            document.body.removeChild(link); // Clean up
+        }
+    </script>
 </body>
 </html>
