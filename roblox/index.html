@@ -9,287 +9,275 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-        }
-
-        body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
             min-height: 100vh;
             display: flex;
-            align-items: center;
             justify-content: center;
+            align-items: center;
             padding: 20px;
         }
-
+        
         .container {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 40px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            width: 90%;
             max-width: 500px;
-            width: 100%;
+            padding: 30px;
             text-align: center;
-            transition: transform 0.3s ease;
         }
-
-        .container:hover {
-            transform: translateY(-5px);
-        }
-
-        .title {
+        
+        h1 {
             color: #333;
-            font-size: 2.2em;
-            margin-bottom: 10px;
-            font-weight: 700;
+            margin-bottom: 20px;
+            font-size: 28px;
         }
-
-        .subtitle {
-            color: #666;
-            margin-bottom: 30px;
-            font-size: 1.1em;
+        
+        .description {
+            color: #555;
+            margin-bottom: 25px;
+            line-height: 1.5;
         }
-
+        
         .input-group {
-            position: relative;
             margin-bottom: 25px;
         }
-
-        .input-field {
+        
+        input {
             width: 100%;
-            padding: 15px 20px;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
             font-size: 16px;
-            border: 2px solid #e1e5e9;
-            border-radius: 12px;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus {
+            border-color: #4285F4;
             outline: none;
-            transition: all 0.3s ease;
-            background: rgba(255, 255, 255, 0.9);
         }
-
-        .input-field:focus {
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-
-        .input-field:valid {
-            border-color: #28a745;
-        }
-
-        .download-btn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        
+        button {
+            background: linear-gradient(to right, #4285F4, #34A853);
             color: white;
             border: none;
-            padding: 15px 40px;
-            font-size: 16px;
-            font-weight: 600;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-            width: 100%;
-            margin-bottom: 20px;
-        }
-
-        .download-btn:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
-        }
-
-        .download-btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-
-        .spinner {
-            display: none;
-            width: 20px;
-            height: 20px;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            border-top-color: white;
-            animation: spin 1s ease-in-out infinite;
-            margin-right: 10px;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        .status-message {
-            margin-top: 15px;
-            padding: 10px;
+            padding: 15px 25px;
             border-radius: 8px;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            opacity: 0;
-            transform: translateY(10px);
+            font-size: 16px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            font-weight: bold;
+            width: 100%;
         }
-
-        .status-message.show {
-            opacity: 1;
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        button:active {
             transform: translateY(0);
         }
-
-        .status-message.success {
-            background: rgba(40, 167, 69, 0.1);
-            color: #28a745;
-            border: 1px solid rgba(40, 167, 69, 0.2);
-        }
-
-        .status-message.error {
-            background: rgba(220, 53, 69, 0.1);
-            color: #dc3545;
-            border: 1px solid rgba(220, 53, 69, 0.2);
-        }
-
-        .preview-container {
+        
+        #status {
             margin-top: 20px;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 14px;
             display: none;
         }
-
-        .preview-image {
-            max-width: 100%;
-            max-height: 200px;
-            border-radius: 10px;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            display: block;
         }
-
-        .example-text {
-            color: #888;
-            font-size: 0.9em;
-            margin-top: 10px;
+        
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            display: block;
+        }
+        
+        .preview {
+            margin-top: 25px;
+            display: none;
+        }
+        
+        .preview img {
+            max-width: 100%;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .download-link {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 10px 20px;
+            background-color: #4285F4;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        
+        .download-link:hover {
+            background-color: #3367D6;
+        }
+        
+        .instructions {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 25px;
+            text-align: left;
+        }
+        
+        .instructions h3 {
+            margin-bottom: 10px;
+            color: #333;
+        }
+        
+        .instructions ol {
+            padding-left: 20px;
+        }
+        
+        .instructions li {
+            margin-bottom: 8px;
+            color: #555;
+        }
+        
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #4285F4;
+            margin-bottom: 10px;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1 class="title">🎮 Roblox Image Downloader</h1>
-        <p class="subtitle">Enter a Roblox asset ID to download the image</p>
+        <div class="logo">Roblox Image Downloader</div>
+        <h1>Download Roblox Asset Images</h1>
+        <p class="description">Enter a Roblox asset ID below to download its image directly to your device.</p>
         
         <div class="input-group">
-            <input 
-                type="text" 
-                id="assetId" 
-                class="input-field" 
-                placeholder="Enter Asset ID (e.g., 123456789)"
-                required
-            >
+            <input type="text" id="assetId" placeholder="Enter Roblox Asset ID (e.g., 123456789)" autocomplete="off">
         </div>
         
-        <button id="downloadBtn" class="download-btn">
-            <div class="spinner" id="spinner"></div>
-            <span id="btnText">Download Image</span>
-        </button>
+        <button id="downloadBtn">Download Image</button>
         
-        <div class="preview-container" id="previewContainer">
-            <img id="previewImage" class="preview-image" alt="Asset Preview">
+        <div id="status"></div>
+        
+        <div class="preview" id="preview">
+            <!-- Image preview will be shown here -->
         </div>
         
-        <div id="statusMessage" class="status-message"></div>
-        
-        <p class="example-text">Enter the asset ID from a Roblox item URL</p>
+        <div class="instructions">
+            <h3>How to use:</h3>
+            <ol>
+                <li>Find the Roblox asset ID from the URL of any Roblox item</li>
+                <li>Enter the ID in the input field above</li>
+                <li>Click the Download Image button</li>
+                <li>The image will be downloaded automatically</li>
+            </ol>
+        </div>
     </div>
 
     <script>
-        const assetIdInput = document.getElementById('assetId');
-        const downloadBtn = document.getElementById('downloadBtn');
-        const spinner = document.getElementById('spinner');
-        const btnText = document.getElementById('btnText');
-        const statusMessage = document.getElementById('statusMessage');
-        const previewContainer = document.getElementById('previewContainer');
-        const previewImage = document.getElementById('previewImage');
-
-        // Allow download on Enter key
-        assetIdInput.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                downloadImage();
-            }
-        });
-
-        downloadBtn.addEventListener('click', downloadImage);
-
-        function showStatus(message, type) {
-            statusMessage.textContent = message;
-            statusMessage.className = `status-message ${type} show`;
+        document.addEventListener('DOMContentLoaded', function() {
+            const assetIdInput = document.getElementById('assetId');
+            const downloadBtn = document.getElementById('downloadBtn');
+            const statusDiv = document.getElementById('status');
+            const previewDiv = document.getElementById('preview');
             
-            setTimeout(() => {
-                statusMessage.classList.remove('show');
-            }, 5000);
-        }
-
-        function setLoading(loading) {
-            downloadBtn.disabled = loading;
-            spinner.style.display = loading ? 'inline-block' : 'none';
-            btnText.textContent = loading ? 'Downloading...' : 'Download Image';
-        }
-
-        async function downloadImage() {
-            const assetId = assetIdInput.value.trim();
-            
-            if (!assetId) {
-                showStatus('Please enter an asset ID', 'error');
-                return;
-            }
-
-            if (!/^\d+$/.test(assetId)) {
-                showStatus('Asset ID must contain only numbers', 'error');
-                return;
-            }
-
-            setLoading(true);
-            previewContainer.style.display = 'none';
-
-            try {
-                const imageUrl = `https://thecsdev.com/tool/roblox-tools/api-s/rcd-image/?asset_id=${assetId}`;
+            downloadBtn.addEventListener('click', function() {
+                const assetId = assetIdInput.value.trim();
                 
-                // First, try to load the image to check if it exists
+                // Validate input
+                if (!assetId) {
+                    showStatus('Please enter a Roblox asset ID', 'error');
+                    return;
+                }
+                
+                if (!/^\d+$/.test(assetId)) {
+                    showStatus('Asset ID must contain only numbers', 'error');
+                    return;
+                }
+                
+                // Construct the API URL
+                const apiUrl = `https://thecsdev.com/tool/roblox-tools/api-s/rcd-image/?asset_id=${assetId}`;
+                
+                // Show loading state
+                showStatus('Fetching image...', 'success');
+                downloadBtn.disabled = true;
+                downloadBtn.textContent = 'Downloading...';
+                
+                // Create a hidden image element to load the image
                 const img = new Image();
-                img.crossOrigin = 'anonymous';
+                img.crossOrigin = 'Anonymous';
                 
                 img.onload = function() {
-                    // Show preview
-                    previewImage.src = imageUrl;
-                    previewContainer.style.display = 'block';
+                    // Create a canvas to convert the image to a blob
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    ctx.drawImage(img, 0, 0);
                     
-                    // Download the image
-                    downloadImageFile(imageUrl, `roblox-asset-${assetId}.png`);
-                    showStatus('Image downloaded successfully!', 'success');
-                    setLoading(false);
+                    // Convert to blob and trigger download
+                    canvas.toBlob(function(blob) {
+                        const url = URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = `roblox-asset-${assetId}.png`;
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                        URL.revokeObjectURL(url);
+                        
+                        // Show success message
+                        showStatus(`Image downloaded successfully!`, 'success');
+                        
+                        // Show preview
+                        previewDiv.innerHTML = `
+                            <p>Image Preview:</p>
+                            <img src="${apiUrl}" alt="Roblox Asset ${assetId}">
+                            <br>
+                            <a href="${apiUrl}" download="roblox-asset-${assetId}.png" class="download-link">Download Again</a>
+                        `;
+                        previewDiv.style.display = 'block';
+                        
+                        // Reset button
+                        downloadBtn.disabled = false;
+                        downloadBtn.textContent = 'Download Image';
+                    });
                 };
                 
                 img.onerror = function() {
-                    showStatus('Image not found. Please check the asset ID.', 'error');
-                    setLoading(false);
+                    showStatus('Failed to load image. Please check the asset ID and try again.', 'error');
+                    downloadBtn.disabled = false;
+                    downloadBtn.textContent = 'Download Image';
+                    previewDiv.style.display = 'none';
                 };
                 
-                img.src = imageUrl;
-                
-            } catch (error) {
-                console.error('Download error:', error);
-                showStatus('Failed to download image. Please try again.', 'error');
-                setLoading(false);
-            }
-        }
-
-        function downloadImageFile(url, filename) {
-            // Create a temporary anchor element
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = filename;
-            link.target = '_blank';
+                // Start loading the image
+                img.src = apiUrl;
+            });
             
-            // Append to body, click, and remove
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        }
-
-        // Clear status message when user starts typing
-        assetIdInput.addEventListener('input', function() {
-            if (statusMessage.classList.contains('show')) {
-                statusMessage.classList.remove('show');
+            function showStatus(message, type) {
+                statusDiv.textContent = message;
+                statusDiv.className = type;
+                statusDiv.style.display = 'block';
             }
+            
+            // Example asset ID for testing
+            assetIdInput.placeholder = "e.g., 111111111 (try this example ID)";
         });
     </script>
 </body>
