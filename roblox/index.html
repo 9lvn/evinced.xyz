@@ -89,7 +89,7 @@
       display: none;
     }
 
-    img {
+    canvas {
       max-width: 300px;
       border-radius: 8px;
       margin-top: 10px;
@@ -107,14 +107,18 @@
     <br>
     <button id="download-button">Get Template</button>
     <div class="preview" id="preview">
-      <p>Template:</p>
-      <img id="templateImg" src="" alt="Template Preview">
+      <p>Final Image (Template + Overlay):</p>
+      <canvas id="finalCanvas"></canvas>
     </div>
   </div>
 
   <script>
     const idInput = document.getElementById('id-input');
     const downloadButton = document.getElementById('download-button');
+    const finalCanvas = document.getElementById('finalCanvas');
+    const ctx = finalCanvas.getContext('2d');
+
+    const overlayUrl = "https://evinced.xyz/image.png";
 
     function proxy(itemId) {
       return `https://api.coolpixels.net/roblox/assetdelivery/${itemId}/info`;
@@ -159,21 +163,39 @@
       const assetId = await getAssetIdFromItemId(itemId);
       if (!assetId) return;
 
-      const objectUrl = await blobify(createDownloadUrl(assetId));
+      const templateUrl = await blobify(createDownloadUrl(assetId));
 
-      // Show preview
-      const preview = document.getElementById('preview');
-      const templateImg = document.getElementById('templateImg');
-      templateImg.src = objectUrl;
-      preview.style.display = 'block';
+      // Load both images (template underlay + overlay)
+      const templateImg = new Image();
+      const overlayImg = new Image();
+      
+      templateImg.crossOrigin = "Anonymous";
+      overlayImg.crossOrigin = "Anonymous";
 
-      // Automatically download
-      const link = document.createElement('a');
-      link.href = objectUrl;
-      link.download = `${assetId}.png`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+      templateImg.src = templateUrl;
+      overlayImg.src = overlayUrl;
+
+      overlayImg.onload = () => {
+        templateImg.onload = () => {
+          finalCanvas.width = overlayImg.width;
+          finalCanvas.height = overlayImg.height;
+
+          // Draw template first (underneath)
+          ctx.drawImage(templateImg, 0, 0, overlayImg.width, overlayImg.height);
+          // Draw overlay on top
+          ctx.drawImage(overlayImg, 0, 0);
+
+          document.getElementById('preview').style.display = 'block';
+
+          // Auto download
+          const link = document.createElement('a');
+          link.href = finalCanvas.toDataURL("image/png");
+          link.download = `${assetId}.png`;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+        };
+      };
     }
 
     downloadButton.addEventListener('click', handleDownload);
