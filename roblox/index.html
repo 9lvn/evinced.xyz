@@ -5,9 +5,7 @@
 <title>roblox clothing template downloader</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
-
   * { box-sizing: border-box; margin:0; padding:0; }
-
   body {
     font-family: 'Roboto', sans-serif;
     display: flex;
@@ -19,7 +17,6 @@
     background: #111;
     color: #fff;
   }
-
   .animated-glow {
     position: absolute;
     width: 1000px;
@@ -31,13 +28,11 @@
     z-index: 0;
     border-radius: 50%;
   }
-
   @keyframes moveHue {
     0% { transform: translate(-20%, -10%) scale(1); }
     50% { transform: translate(10%, 5%) scale(1.1); }
     100% { transform: translate(-15%, 10%) scale(1); }
   }
-
   .container {
     position: relative;
     z-index: 1;
@@ -49,14 +44,12 @@
     width: 100%;
     max-width: 400px;
   }
-
   h1 {
     font-size: 1.8rem;
     margin-bottom: 1.5rem;
     color: #00ccff;
     text-shadow: 0 0 10px #00ccff;
   }
-
   input {
     width: 100%;
     padding: 0.6rem 1rem;
@@ -69,9 +62,7 @@
     text-align:center;
     box-shadow: 0 0 10px rgba(0,204,255,0.3);
   }
-
   input::placeholder { color:#aaa; }
-
   button {
     width:100%;
     padding:0.7rem;
@@ -85,7 +76,6 @@
     transition: all 0.2s;
     box-shadow: 0 0 15px rgba(0,204,255,0.5);
   }
-
   button:hover {
     background:#00e0ff;
     transform: scale(1.03);
@@ -101,7 +91,7 @@
 </div>
 
 <script>
-function downloadTemplate() {
+async function downloadTemplate() {
   let input = document.getElementById('catalogInput').value.trim();
   if (!input) return alert("drop an id/url twin");
 
@@ -109,13 +99,25 @@ function downloadTemplate() {
   if (!match) return alert("no id found fr");
   const id = match[1];
 
-  const imgUrl = `https://thecsdev.com/tool/roblox-tools/api-s/rcd-image/?asset_id=${id}`;
-  const link = document.createElement('a');
-  link.href = imgUrl;
-  link.download = `roblox_template_${id}.png`;
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
+  const url = `https://thecsdev.com/tool/roblox-tools/api-s/rcd-image/?asset_id=${id}`;
+
+  try {
+    // fetch image as blob
+    const res = await fetch(url);
+    if (!res.ok) throw new Error("couldn't fetch image");
+    const blob = await res.blob();
+
+    // create a temporary link and click it
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `roblox_template_${id}.png`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  } catch (err) {
+    console.error(err);
+    alert("failed to download template fr");
+  }
 }
 </script>
 </body>
