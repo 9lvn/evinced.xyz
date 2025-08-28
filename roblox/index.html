@@ -1,284 +1,66 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Roblox Asset Image Downloader</title>
+    <title>Roblox Image Downloader</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        
         body {
-            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
-            min-height: 100vh;
+            font-family: sans-serif;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
-            padding: 20px;
+            padding-top: 50px;
         }
-        
-        .container {
-            background-color: rgba(255, 255, 255, 0.9);
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            width: 90%;
-            max-width: 500px;
-            padding: 30px;
-            text-align: center;
-        }
-        
-        h1 {
-            color: #333;
+
+        #inputForm {
             margin-bottom: 20px;
-            font-size: 28px;
         }
-        
-        .description {
-            color: #555;
-            margin-bottom: 25px;
-            line-height: 1.5;
-        }
-        
-        .input-group {
-            margin-bottom: 25px;
-        }
-        
-        input {
-            width: 100%;
-            padding: 15px;
-            border: 2px solid #ddd;
-            border-radius: 8px;
-            font-size: 16px;
-            transition: border-color 0.3s;
-        }
-        
-        input:focus {
-            border-color: #4285F4;
-            outline: none;
-        }
-        
-        button {
-            background: linear-gradient(to right, #4285F4, #34A853);
-            color: white;
-            border: none;
-            padding: 15px 25px;
-            border-radius: 8px;
-            font-size: 16px;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-            font-weight: bold;
-            width: 100%;
-        }
-        
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-        }
-        
-        button:active {
-            transform: translateY(0);
-        }
-        
-        #status {
+
+        #imageContainer {
             margin-top: 20px;
-            padding: 10px;
-            border-radius: 8px;
-            font-size: 14px;
-            display: none;
         }
-        
-        .success {
-            background-color: #d4edda;
-            color: #155724;
-            display: block;
-        }
-        
+
         .error {
-            background-color: #f8d7da;
-            color: #721c24;
-            display: block;
-        }
-        
-        .preview {
-            margin-top: 25px;
-            display: none;
-        }
-        
-        .preview img {
-            max-width: 100%;
-            border-radius: 8px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        }
-        
-        .download-link {
-            display: inline-block;
-            margin-top: 15px;
-            padding: 10px 20px;
-            background-color: #4285F4;
-            color: white;
-            text-decoration: none;
-            border-radius: 8px;
-            font-weight: bold;
-            transition: background-color 0.3s;
-        }
-        
-        .download-link:hover {
-            background-color: #3367D6;
-        }
-        
-        .instructions {
-            background-color: #f8f9fa;
-            padding: 15px;
-            border-radius: 8px;
-            margin-top: 25px;
-            text-align: left;
-        }
-        
-        .instructions h3 {
-            margin-bottom: 10px;
-            color: #333;
-        }
-        
-        .instructions ol {
-            padding-left: 20px;
-        }
-        
-        .instructions li {
-            margin-bottom: 8px;
-            color: #555;
-        }
-        
-        .logo {
-            font-size: 24px;
-            font-weight: bold;
-            color: #4285F4;
-            margin-bottom: 10px;
+            color: red;
         }
     </style>
 </head>
+
 <body>
-    <div class="container">
-        <div class="logo">Roblox Image Downloader</div>
-        <h1>Download Roblox Asset Images</h1>
-        <p class="description">Enter a Roblox asset ID below to download its image directly to your device.</p>
-        
-        <div class="input-group">
-            <input type="text" id="assetId" placeholder="Enter Roblox Asset ID (e.g., 123456789)" autocomplete="off">
-        </div>
-        
-        <button id="downloadBtn">Download Image</button>
-        
-        <div id="status"></div>
-        
-        <div class="preview" id="preview">
-            <!-- Image preview will be shown here -->
-        </div>
-        
-        <div class="instructions">
-            <h3>How to use:</h3>
-            <ol>
-                <li>Find the Roblox asset ID from the URL of any Roblox item</li>
-                <li>Enter the ID in the input field above</li>
-                <li>Click the Download Image button</li>
-                <li>The image will be downloaded automatically</li>
-            </ol>
-        </div>
+
+    <h1>Roblox Asset Downloader</h1>
+
+    <form id="inputForm">
+        <label for="assetId">Enter Asset ID:</label>
+        <input type="number" id="assetId" name="assetId">
+        <button type="button" onclick="downloadImage()">Download Image</button>
+    </form>
+
+    <div id="imageContainer">
+        <!-- Image will be displayed here if embedding approach is used -->
+        <img id="robloxImage" src="" alt="Roblox Asset">
+        <p id="errorMessage" class="error" style="display: none;">Error loading image.</p>
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const assetIdInput = document.getElementById('assetId');
-            const downloadBtn = document.getElementById('downloadBtn');
-            const statusDiv = document.getElementById('status');
-            const previewDiv = document.getElementById('preview');
-            
-            downloadBtn.addEventListener('click', function() {
-                const assetId = assetIdInput.value.trim();
-                
-                // Validate input
-                if (!assetId) {
-                    showStatus('Please enter a Roblox asset ID', 'error');
-                    return;
-                }
-                
-                if (!/^\d+$/.test(assetId)) {
-                    showStatus('Asset ID must contain only numbers', 'error');
-                    return;
-                }
-                
-                // Construct the API URL
-                const apiUrl = `https://thecsdev.com/tool/roblox-tools/api-s/rcd-image/?asset_id=${assetId}`;
-                
-                // Show loading state
-                showStatus('Fetching image...', 'success');
-                downloadBtn.disabled = true;
-                downloadBtn.textContent = 'Downloading...';
-                
-                // Create a hidden image element to load the image
-                const img = new Image();
-                img.crossOrigin = 'Anonymous';
-                
-                img.onload = function() {
-                    // Create a canvas to convert the image to a blob
-                    const canvas = document.createElement('canvas');
-                    const ctx = canvas.getContext('2d');
-                    canvas.width = img.width;
-                    canvas.height = img.height;
-                    ctx.drawImage(img, 0, 0);
-                    
-                    // Convert to blob and trigger download
-                    canvas.toBlob(function(blob) {
-                        const url = URL.createObjectURL(blob);
-                        const a = document.createElement('a');
-                        a.href = url;
-                        a.download = `roblox-asset-${assetId}.png`;
-                        document.body.appendChild(a);
-                        a.click();
-                        document.body.removeChild(a);
-                        URL.revokeObjectURL(url);
-                        
-                        // Show success message
-                        showStatus(`Image downloaded successfully!`, 'success');
-                        
-                        // Show preview
-                        previewDiv.innerHTML = `
-                            <p>Image Preview:</p>
-                            <img src="${apiUrl}" alt="Roblox Asset ${assetId}">
-                            <br>
-                            <a href="${apiUrl}" download="roblox-asset-${assetId}.png" class="download-link">Download Again</a>
-                        `;
-                        previewDiv.style.display = 'block';
-                        
-                        // Reset button
-                        downloadBtn.disabled = false;
-                        downloadBtn.textContent = 'Download Image';
-                    });
-                };
-                
-                img.onerror = function() {
-                    showStatus('Failed to load image. Please check the asset ID and try again.', 'error');
-                    downloadBtn.disabled = false;
-                    downloadBtn.textContent = 'Download Image';
-                    previewDiv.style.display = 'none';
-                };
-                
-                // Start loading the image
-                img.src = apiUrl;
-            });
-            
-            function showStatus(message, type) {
-                statusDiv.textContent = message;
-                statusDiv.className = type;
-                statusDiv.style.display = 'block';
-            }
-            
-            // Example asset ID for testing
-            assetIdInput.placeholder = "e.g., 111111111 (try this example ID)";
-        });
+        function downloadImage() {
+            const assetId = document.getElementById('assetId').value;
+            const imageUrl = `https://thecsdev.com/tool/roblox-tools/api-s/rcd-image/?asset_id=${assetId}`;
+            const robloxImage = document.getElementById('robloxImage');
+            const errorMessage = document.getElementById('errorMessage');
+
+            robloxImage.onload = () => {
+                errorMessage.style.display = 'none'; // Hide error message if loaded successfully
+            };
+
+            robloxImage.onerror = () => {
+                robloxImage.src = ''; // Clear the image
+                errorMessage.style.display = 'block'; // Show error message
+            };
+
+            robloxImage.src = imageUrl;
+        }
     </script>
+
 </body>
+
 </html>
