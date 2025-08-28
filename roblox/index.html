@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Template Stealer 5000</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Roblox Clothing Template Downloader</title>
   <style>
     body {
       margin: 0;
@@ -18,6 +18,7 @@
       background: #111;
       color: #fff;
     }
+
     .animated-glow {
       position: absolute;
       width: 1000px;
@@ -29,109 +30,175 @@
       z-index: 0;
       border-radius: 50%;
     }
+
     @keyframes moveHue {
-      0% { transform: translate(-20%, -10%) scale(1); }
-      50% { transform: translate(10%, 5%) scale(1.1); }
-      100% { transform: translate(-15%, 10%) scale(1); }
+      0% {
+        transform: translate(-20%, -10%) scale(1);
+        background: radial-gradient(circle at center, #000000, #808080);
+      }
+      50% {
+        transform: translate(10%, 5%) scale(1.1);
+        background: radial-gradient(circle at center, #333333, #808080);
+      }
+      100% {
+        transform: translate(-15%, 10%) scale(1);
+        background: radial-gradient(circle at center, #000000, #666666);
+      }
     }
+
     .container {
       text-align: center;
       z-index: 1;
       position: relative;
     }
+
     .key-box {
       font-size: 1.2rem;
-      padding: 0.8rem;
+      padding: 0.5rem 1rem;
       border: none;
       border-radius: 8px;
       background-color: #333;
       color: #fff;
       width: 300px;
+      height: 40px;
       text-align: center;
       font-family: monospace;
       box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
+      z-index: 1;
     }
-    canvas {
-      margin-top: 15px;
-      max-width: 500px;
-      border: 1px solid #444;
+
+    button {
+      margin-top: 10px;
+      padding: 10px 20px;
+      font-size: 1rem;
+      background: #007bff;
+      border: none;
       border-radius: 8px;
+      cursor: pointer;
+      color: #fff;
+      box-shadow: 0 0 10px rgba(0, 123, 255, 0.6);
+      transition: background 0.3s;
+    }
+
+    button:hover {
+      background: #0056b3;
+    }
+
+    .preview {
+      margin-top: 20px;
+      display: none;
+    }
+
+    canvas {
+      max-width: 300px;
+      border-radius: 8px;
+      margin-top: 10px;
+      border: 2px solid #fff;
+      box-shadow: 0 0 20px rgba(0, 255, 255, 0.6);
     }
   </style>
 </head>
 <body>
   <div class="animated-glow"></div>
+
   <div class="container">
-    <h1>Template Stealer 5000</h1>
-    <input type="text" id="id-input" class="key-box" placeholder="Enter Catalog ID"/>
-    <canvas id="preview" style="display:none;"></canvas>
+    <h1>Roblox Clothing Template Downloader</h1>
+    <input type="text" id="id-input" class="key-box" placeholder="Enter Catalog Item ID">
+    <br>
+    <button id="download-button">Get Template</button>
+    <div class="preview" id="preview">
+      <p>Final Image (Template + Overlay):</p>
+      <canvas id="finalCanvas"></canvas>
+    </div>
   </div>
 
   <script>
+    const idInput = document.getElementById('id-input');
+    const downloadButton = document.getElementById('download-button');
+    const finalCanvas = document.getElementById('finalCanvas');
+    const ctx = finalCanvas.getContext('2d');
+
     const overlayUrl = "https://evinced.xyz/image.png";
-    let overlayImg = new Image();
-    overlayImg.crossOrigin = "anonymous";
-    overlayImg.src = overlayUrl;
 
     function proxy(itemId) {
       return `https://api.coolpixels.net/roblox/assetdelivery/${itemId}/info`;
     }
+
     function createDownloadUrl(itemId) {
       return `https://api.coolpixels.net/roblox/assetdelivery/${itemId}`;
     }
+
     async function getAssetIdFromItemId(itemId) {
+      const url = proxy(itemId);
       try {
-        const response = await fetch(proxy(itemId));
+        const response = await fetch(url);
         const data = await response.json();
+        const xmlText = data.content;
         const parser = new DOMParser();
-        const xmlDoc = parser.parseFromString(data.content, 'text/xml');
+        const xmlDoc = parser.parseFromString(xmlText, 'text/xml');
         const urlNode = xmlDoc.querySelector('roblox Item Properties Content url');
-        return urlNode.textContent.split('=')[1];
-      } catch (e) {
-        console.error(e);
+        const urlValue = urlNode.textContent;
+        const assetId = urlValue.split('=')[1];
+        return assetId;
+      } catch (error) {
+        console.error('Error retrieving asset ID:', error);
+        alert('Could not retrieve asset ID.');
         return null;
       }
     }
 
-    async function downloadAndMerge(itemId) {
+    async function blobify(originalUrl) {
+      const response = await fetch(originalUrl);
+      const data = await response.blob();
+      return URL.createObjectURL(new Blob([data], { type: response.headers.get('content-type') }));
+    }
+
+    async function handleDownload() {
+      const itemId = idInput.value.trim();
+      if (!itemId) {
+        alert('Please enter a valid catalog item ID!');
+        return;
+      }
+
       const assetId = await getAssetIdFromItemId(itemId);
       if (!assetId) return;
 
-      const templateUrl = createDownloadUrl(assetId);
+      const templateUrl = await blobify(createDownloadUrl(assetId));
 
-      // load template + overlay together
+      // Load both images (template underlay + overlay)
       const templateImg = new Image();
-      templateImg.crossOrigin = "anonymous";
+      const overlayImg = new Image();
+      
+      templateImg.crossOrigin = "Anonymous";
+      overlayImg.crossOrigin = "Anonymous";
+
       templateImg.src = templateUrl;
+      overlayImg.src = overlayUrl;
 
-      await Promise.all([
-        new Promise(res => templateImg.onload = res),
-        new Promise(res => overlayImg.onload = res)
-      ]);
+      overlayImg.onload = () => {
+        templateImg.onload = () => {
+          finalCanvas.width = overlayImg.width;
+          finalCanvas.height = overlayImg.height;
 
-      // create canvas
-      const canvas = document.getElementById("preview");
-      const ctx = canvas.getContext("2d");
-      canvas.width = overlayImg.width;
-      canvas.height = overlayImg.height;
+          // Draw template first (underneath)
+          ctx.drawImage(templateImg, 0, 0, overlayImg.width, overlayImg.height);
+          // Draw overlay on top
+          ctx.drawImage(overlayImg, 0, 0);
 
-      // draw template first, then overlay
-      ctx.drawImage(templateImg, 0, 0, canvas.width, canvas.height);
-      ctx.drawImage(overlayImg, 0, 0, canvas.width, canvas.height);
-      canvas.style.display = "block";
+          document.getElementById('preview').style.display = 'block';
 
-      // download merged image
-      const link = document.createElement("a");
-      link.download = `clothing_${assetId}.png`;
-      link.href = canvas.toDataURL("image/png");
-      link.click();
+          // Auto download
+          const link = document.createElement('a');
+          link.href = finalCanvas.toDataURL("image/png");
+          link.download = `${assetId}.png`;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+        };
+      };
     }
 
-    document.getElementById("id-input").addEventListener("keypress", (e) => {
-      if (e.key === "Enter") {
-        downloadAndMerge(e.target.value.trim());
-      }
-    });
+    downloadButton.addEventListener('click', handleDownload);
   </script>
 </body>
 </html>
