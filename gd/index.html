@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Mini Geometry Dash — single file</title>
+<title>Mini Geometry Dash</title>
 <style>
   :root{--bg:#0b1020;--fg:#e6f0ff;--accent:#ff6b6b}
   html,body{height:100%;margin:0;font-family:Inter,system-ui,Arial,Helvetica,sans-serif;background:var(--bg);color:var(--fg)}
@@ -22,7 +22,7 @@
   <div class="hud">
     <div class="info">score <span id="score">0</span></div>
     <div class="info">record <span id="best">0</span></div>
-    <button id="mode" class="btn small">mode: cube</button>
+    <button id="mode" class="btn small">mode</button>
     <button id="mute" class="btn small">mute</button>
     <button id="restart" class="btn small">restart</button>
   </div>
@@ -46,26 +46,27 @@ let score=0
 let best = Number(localStorage.getItem('gd_best')||0)
 document.getElementById('best').innerText = best
 let mute=false
-let mode="cube"
+let mode=Math.random()<0.5?"cube":"wave"
 const scoreEl=document.getElementById('score')
 const muteBtn=document.getElementById('mute')
 const restartBtn=document.getElementById('restart')
 const modeBtn=document.getElementById('mode')
+modeBtn.innerText = "mode: "+mode
 muteBtn.onclick = ()=>{mute=!mute; muteBtn.innerText = mute? 'unmute':'mute'}
-restartBtn.onclick = ()=>{startGame()}
-modeBtn.onclick = ()=>{mode = mode==="cube"?"wave":"cube"; modeBtn.innerText = "mode: "+mode; startGame()}
+restartBtn.onclick = ()=>{startGame(); requestAnimationFrame(loop)}
+modeBtn.onclick = ()=>{mode = mode==="cube"?"wave":"cube"; modeBtn.innerText = "mode: "+mode; startGame(); requestAnimationFrame(loop)}
 
 const player = {
   x: 80, y:0, w:36, h:36,
   vy:0, onGround:false,
   jumping:false, jumpHold:false, jumpTime:0
 }
-let speed = 300
-let gravity = 1500
-let jumpVel = -520
+let speed = 200 // lower for easier
+let gravity = 1200 // lower gravity
+let jumpVel = -450 // lower jump speed
 let obstacles = []
 let spawnTimer = 0
-let gapMin = 220, gapMax = 420
+let gapMin = 250, gapMax = 400 // bigger gaps
 let lastTimestamp = 0
 let gameOver = false
 let pixelsTraveled = 0
@@ -88,7 +89,7 @@ function startGame(){
   obstacles = []
   score=0
   pixelsTraveled=0
-  speed=300
+  speed=200
   gameOver=false
   player.y = canvas.height/DPR - player.h - 60
   player.vy = 0
@@ -99,9 +100,9 @@ function startGame(){
 startGame()
 
 function spawnObstacle(){
-  const h = 36 + Math.round(Math.random()*80)
+  const h = 36 + Math.round(Math.random()*60)
   const y = canvas.height/DPR - h - 60
-  const w = 30 + Math.round(Math.random()*40)
+  const w = 30 + Math.round(Math.random()*30)
   const x = canvas.width/DPR + 10
   obstacles.push({x,y,w,h,passed:false})
 }
@@ -112,7 +113,7 @@ function rectsOverlap(a,b){
 
 function update(dt){
   if(gameOver) return
-  speed += dt * 2
+  speed += dt * 1
   pixelsTraveled += speed * dt
   score = Math.floor(pixelsTraveled/10)
   scoreEl.innerText = score
@@ -141,7 +142,7 @@ function update(dt){
     } else player.onGround = false
   }
   else if(mode==="wave"){
-    if(keys.space || player.jumpHold){ player.vy = -400 } else { player.vy = 400 }
+    if(keys.space || player.jumpHold){ player.vy = -300 } else { player.vy = 300 }
     player.y += player.vy * dt
     if(player.y<0) player.y=0
     if(player.y+player.h>canvas.height/DPR-60) player.y = canvas.height/DPR-60 - player.h
