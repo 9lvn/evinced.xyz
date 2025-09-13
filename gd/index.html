@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Mini Geometry Dash</title>
+<title>Mini Geometry Dash — single file</title>
 <style>
   :root{--bg:#0b1020;--fg:#e6f0ff;--accent:#ff6b6b}
   html,body{height:100%;margin:0;font-family:Inter,system-ui,Arial,Helvetica,sans-serif;background:var(--bg);color:var(--fg)}
@@ -59,14 +59,15 @@ modeBtn.onclick = ()=>{mode = mode==="cube"?"wave":"cube"; modeBtn.innerText = "
 const player = {
   x: 80, y:0, w:36, h:36,
   vy:0, onGround:false,
-  jumping:false, jumpHold:false, jumpTime:0
+  jumping:false, jumpHold:false, jumpTime:0,
+  trail: []
 }
-let speed = 200 // lower for easier
-let gravity = 1200 // lower gravity
-let jumpVel = -450 // lower jump speed
+let speed = 200
+let gravity = 1200
+let jumpVel = -450
 let obstacles = []
 let spawnTimer = 0
-let gapMin = 250, gapMax = 400 // bigger gaps
+let gapMin = 250, gapMax = 400
 let lastTimestamp = 0
 let gameOver = false
 let pixelsTraveled = 0
@@ -95,6 +96,7 @@ function startGame(){
   player.vy = 0
   player.onGround = true
   player.jumping=false
+  player.trail = []
   lastTimestamp = performance.now()
 }
 startGame()
@@ -146,6 +148,8 @@ function update(dt){
     player.y += player.vy * dt
     if(player.y<0) player.y=0
     if(player.y+player.h>canvas.height/DPR-60) player.y = canvas.height/DPR-60 - player.h
+    player.trail.push({x: player.x, y: player.y})
+    if(player.trail.length>15) player.trail.shift()
   }
 
   spawnTimer -= dt
@@ -181,75 +185,19 @@ function draw(){
   ctx.fillStyle = '#0f2140'
   ctx.fillRect(0,H-60,W,60)
 
-  ctx.fillStyle = mode==="cube"?'#ffd166':'#06d6a0'
-  roundRect(ctx, player.x, player.y, player.w, player.h, 6, true, false)
-
-  ctx.fillStyle = '#ef476f'
-  obstacles.forEach(ob=>{
-    roundRect(ctx, ob.x, ob.y, ob.w, ob.h, 4, true, false)
-  })
-
-  ctx.fillStyle = '#dfe9ff'
-  ctx.font = '20px system-ui'
-  ctx.textAlign = 'left'
-  ctx.fillText('score ' + score, 12, 28)
-  ctx.textAlign = 'right'
-  ctx.fillText('best ' + best, W-12, 28)
-
-  if(gameOver){
-    ctx.fillStyle = 'rgba(2,6,15,0.6)'
-    ctx.fillRect(0,0,W,H)
-    ctx.fillStyle = '#fff'
-    ctx.textAlign = 'center'
-    ctx.font = '40px system-ui'
-    ctx.fillText('you died', W/2, H/2 - 10)
-    ctx.font = '16px system-ui'
-    ctx.fillText('tap or press restart to try again', W/2, H/2 + 26)
-  }
-  ctx.restore()
-}
-
-function roundRect(ctx,x,y,w,h,r,fill,stroke){
-  if(typeof r==='undefined') r=5
-  ctx.beginPath()
-  ctx.moveTo(x+r,y)
-  ctx.arcTo(x+w,y,x+w,y+h,r)
-  ctx.arcTo(x+w,y+h,x,y+h,r)
-  ctx.arcTo(x,y+h,x,y,r)
-  ctx.arcTo(x,y,x+w,y,r)
-  ctx.closePath()
-  if(fill) ctx.fill()
-  if(stroke) ctx.stroke()
-}
-
-const audioCtx = new (window.AudioContext || window.webkitAudioContext)()
-function playSfx(type){
-  if(mute) return
-  try{
-    const now = audioCtx.currentTime
-    const o = audioCtx.createOscillator()
-    const g = audioCtx.createGain()
-    o.connect(g); g.connect(audioCtx.destination)
-    if(type==='jump'){ o.type='sine'; o.frequency.setValueAtTime(520,now); g.gain.setValueAtTime(0.02, now); g.gain.exponentialRampToValueAtTime(0.0001, now+0.18)}
-    if(type==='hit'){ o.type='square'; o.frequency.setValueAtTime(120,now); g.gain.setValueAtTime(0.04, now); g.gain.exponentialRampToValueAtTime(0.0001, now+0.35)}
-    o.start(now); o.stop(now+0.3)
-  }catch(e){ }
-}
-
-function loop(ts){
-  const dt = Math.min(0.04, (ts - lastTimestamp)/1000)
-  lastTimestamp = ts
-  update(dt)
-  draw()
-  if(!gameOver) requestAnimationFrame(loop)
-}
-requestAnimationFrame(loop)
-
-canvas.addEventListener('pointerdown', e=>{
-  if(gameOver){ startGame(); requestAnimationFrame(loop) }
-})
-window.addEventListener('blur', ()=>{ keys.space=false; player.jumpHold=false })
-window._gd = {player, obstacles}
-</script>
-</body>
-</html>
+  if(mode==="cube"){
+    ctx.fillStyle = '#ffd166'
+    roundRect(ctx, player.x, player.y, player.w, player.h, 6, true, false)
+  } else {
+    // draw contrail
+    ctx.strokeStyle = 'rgba(6,214,160,0.5)'
+    ctx.lineWidth = 6
+    ctx.beginPath()
+    for(let i=0;i<player.trail.length;i++){
+      const t = player.trail[i]
+      if(i==0) ctx.moveTo(t.x+t.w/2 || 0, t.y+t.h/2 || 0)
+      else ctx.lineTo(t.x+t.w/2 || 0, t.y+t.h/2 || 0)
+    }
+    ctx.stroke()
+    // draw triangle
+    ctx.fillStyle = '#
