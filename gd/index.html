@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Mini Geometry Dash — single file</title>
+<style>
+  :root{--bg:#0b1020;--fg:#e6f0ff;--accent:#ff6b6b}
+  html,body{height:100%;margin:0;font-family:Inter,system-ui,Arial,Helvetica,sans-serif;background:var(--bg);color:var(--fg)}
+  .wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:18px;padding:20px}
+  canvas{background:linear-gradient(180deg,#071025 0%, #0b1020 100%);border-radius:12px;box-shadow:0 8px 30px rgba(0,0,0,.6);max-width:100%;height:60vh}
+  .hud{display:flex;gap:12px;align-items:center;color:#dfe9ff;user-select:none}
+  .btn{background:transparent;border:1px solid rgba(255,255,255,.06);padding:8px 12px;border-radius:8px;color:var(--fg);cursor:pointer}
+  .small{font-size:12px;opacity:.9}
+  .info{font-size:14px;color:#bcd}
+  .footer{font-size:12px;color:#9bb;opacity:.9}
+  @media(min-width:800px){canvas{height:520px;width:900px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="hud">
+    <div class="info">score <span id="score">0</span></div>
+    <div class="info">record <span id="best">0</span></div>
+    <button id="mode" class="btn small">mode: cube</button>
+    <button id="mute" class="btn small">mute</button>
+    <button id="restart" class="btn small">restart</button>
+  </div>
+  <canvas id="game"></canvas>
+  <div class="footer small">controls space, w, or arrow up to jump • in wave mode hold to go up release to go down</div>
+</div>
+<script>
+const canvas = document.getElementById('game')
+const ctx = canvas.getContext('2d')
+let DPR = window.devicePixelRatio || 1
+function resize(){
+  const rect = canvas.getBoundingClientRect()
+  canvas.width = Math.max(600, Math.floor(rect.width * DPR))
+  canvas.height = Math.max(300, Math.floor(rect.height * DPR))
+}
+new ResizeObserver(resize).observe(canvas)
+resize()
+
+let running=true
+let score=0
+let best = Number(localStorage.getItem('gd_best')||0)
+document.getElementById('best').innerText = best
+let mute=false
+let mode="cube"
+const scoreEl=document.getElementById('score')
+const muteBtn=document.getElementById('mute')
+const restartBtn=document.getElementById('restart')
+const modeBtn=document.getElementById('mode')
+muteBtn.onclick = ()=>{mute=!mute; muteBtn.innerText = mute? 'unmute':'mute'}
+restartBtn.onclick = ()=>{startGame()}
+modeBtn.onclick = ()=>{mode = mode==="cube"?"wave":"cube"; modeBtn.innerText = "mode: "+mode; startGame()}
+
+const player = {
+  x: 80, y:0, w:36, h:36,
+  vy:0, onGround:false,
+  jumping:false, jumpHold:false, jumpTime:0
+}
+let speed = 300
+let gravity = 1500
+let jumpVel = -520
+let obstacles = []
+let spawnTimer = 0
+let gapMin = 220, gapMax = 420
+let lastTimestamp = 0
+let gameOver = false
+let pixelsTraveled = 0
+
+let keys = {}
+window.addEventListener('keydown', e=>{
+  if(['Space','ArrowUp','KeyW'].includes(e.code)){
+    e.preventDefault(); keys.space=true
+  }
+})
+window.addEventListener('keyup', e=>{
+  if(['Space','ArrowUp','KeyW'].includes(e.code)){
+    keys.space=false; player.jumpHold=false
+  }
+})
+canvas.addEventListener('pointerdown', e=>{ keys.space=true; player.jumpHold=true })
+canvas.addEventListener('pointerup', e=>{ keys.space=false; player.jumpHold=false })
+
+function startGame(){
+  obstacles = []
+  score=0
+  pixelsTraveled=0
+  speed=300
+  gameOver=false
+  player.y = canvas.height/DPR - player.h - 60
+  player.vy = 0
+  player.onGround = true
+  player.jumping=false
+  lastTimestamp = performance.now()
+}
+startGame()
+
+function spawnObstacle(){
+  const h = 36 + Math.round(Math.random()*80)
+  const y = canvas.height/DPR - h - 60
+  const w = 30 + Math.round(Math.random()*40)
+  const x = canvas.width/DPR + 10
+  obstacles.push({x,y,w,h,passed:false})
+}
+
+function rectsOverlap(a,b){
+  return a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y
+}
+
+function update(dt){
+  if(gameOver) return
+  speed += dt * 2
+  pixelsTraveled += speed * dt
+  score = Math.floor(pixelsTraveled/10)
+  scoreEl.innerText = score
+
+  if(mode==="cube"){
+    player.vy += gravity * dt
+    if((keys.space || player.jumpHold) && (player.onGround || (player.jumping && player.jumpTime < 0.15))){
+      if(!player.jumping){
+        player.vy = jumpVel
+        player.jumping=true
+        player.onGround=false
+        player.jumpTime = 0
+        playSfx('jump')
+      } else {
+        player.jumpTime += dt
+        if(player.jumpTime < 0.15) player.vy = Math.max(player.vy, jumpVel)
+      }
+    }
+    player.y += player.vy * dt
+    const groundY = canvas.height/DPR - 60
+    if(player.y + player.h >= groundY){
+      player.y = groundY - player.h
+      player.vy = 0
+      player.onGround = true
+      player.jumping = false
+    } else player.onGround = false
+  }
+  else if(mode==="wave"){
+    if(keys.space || player.jumpHold){ player.vy = -400 } else { player.vy = 400 }
+    player.y += player.vy * dt
+    if(player.y<0) player.y=0
+    if(player.y+player.h>canvas.height/DPR-60) player.y = canvas.height/DPR-60 - player.h
+  }
+
+  spawnTimer -= dt
+  if(spawnTimer <=0){
+    const gap = gapMin + Math.random()*(gapMax-gapMin)
+    spawnObstacle()
+    spawnTimer = (gap / speed)
+  }
+  for(let i=obstacles.length-1;i>=0;i--){
+    const ob = obstacles[i]
+    ob.x -= speed * dt
+    const playerRect = {x:player.x, y:player.y, w:player.w, h:player.h}
+    const obRect = {x:ob.x, y:ob.y, w:ob.w, h:ob.h}
+    if(rectsOverlap(playerRect, obRect)){
+      if(!gameOver){ playSfx('hit') }
+      gameOver = true
+      running = false
+      if(score > best){ best = score; localStorage.setItem('gd_best', best); document.getElementById('best').innerText = best }
+    }
+    if(ob.x + ob.w < -50) obstacles.splice(i,1)
+  }
+}
+
+function draw(){
+  ctx.clearRect(0,0,canvas.width,canvas.height)
+  ctx.save()
+  ctx.scale(DPR,DPR)
+  const W = canvas.width/DPR, H = canvas.height/DPR
+  ctx.fillStyle = '#071127'
+  ctx.fillRect(0,0,W,H)
+  ctx.fillStyle = '#071634'
+  ctx.fillRect(0,H-220,W,220)
+  ctx.fillStyle = '#0f2140'
+  ctx.fillRect(0,H-60,W,60)
+
+  ctx.fillStyle = mode==="cube"?'#ffd166':'#06d6a0'
+  roundRect(ctx, player.x, player.y, player.w, player.h, 6, true, false)
+
+  ctx.fillStyle = '#ef476f'
+  obstacles.forEach(ob=>{
+    roundRect(ctx, ob.x, ob.y, ob.w, ob.h, 4, true, false)
+  })
+
+  ctx.fillStyle = '#dfe9ff'
+  ctx.font = '20px system-ui'
+  ctx.textAlign = 'left'
+  ctx.fillText('score ' + score, 12, 28)
+  ctx.textAlign = 'right'
+  ctx.fillText('best ' + best, W-12, 28)
+
+  if(gameOver){
+    ctx.fillStyle = 'rgba(2,6,15,0.6)'
+    ctx.fillRect(0,0,W,H)
+    ctx.fillStyle = '#fff'
+    ctx.textAlign = 'center'
+    ctx.font = '40px system-ui'
+    ctx.fillText('you died', W/2, H/2 - 10)
+    ctx.font = '16px system-ui'
+    ctx.fillText('tap or press restart to try again', W/2, H/2 + 26)
+  }
+  ctx.restore()
+}
+
+function roundRect(ctx,x,y,w,h,r,fill,stroke){
+  if(typeof r==='undefined') r=5
+  ctx.beginPath()
+  ctx.moveTo(x+r,y)
+  ctx.arcTo(x+w,y,x+w,y+h,r)
+  ctx.arcTo(x+w,y+h,x,y+h,r)
+  ctx.arcTo(x,y+h,x,y,r)
+  ctx.arcTo(x,y,x+w,y,r)
+  ctx.closePath()
+  if(fill) ctx.fill()
+  if(stroke) ctx.stroke()
+}
+
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)()
+function playSfx(type){
+  if(mute) return
+  try{
+    const now = audioCtx.currentTime
+    const o = audioCtx.createOscillator()
+    const g = audioCtx.createGain()
+    o.connect(g); g.connect(audioCtx.destination)
+    if(type==='jump'){ o.type='sine'; o.frequency.setValueAtTime(520,now); g.gain.setValueAtTime(0.02, now); g.gain.exponentialRampToValueAtTime(0.0001, now+0.18)}
+    if(type==='hit'){ o.type='square'; o.frequency.setValueAtTime(120,now); g.gain.setValueAtTime(0.04, now); g.gain.exponentialRampToValueAtTime(0.0001, now+0.35)}
+    o.start(now); o.stop(now+0.3)
+  }catch(e){ }
+}
+
+function loop(ts){
+  const dt = Math.min(0.04, (ts - lastTimestamp)/1000)
+  lastTimestamp = ts
+  update(dt)
+  draw()
+  if(!gameOver) requestAnimationFrame(loop)
+}
+requestAnimationFrame(loop)
+
+canvas.addEventListener('pointerdown', e=>{
+  if(gameOver){ startGame(); requestAnimationFrame(loop) }
+})
+window.addEventListener('blur', ()=>{ keys.space=false; player.jumpHold=false })
+window._gd = {player, obstacles}
+</script>
+</body>
+</html>
