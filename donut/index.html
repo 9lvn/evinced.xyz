@@ -7,57 +7,90 @@
   <style>
     body {
       font-family: 'Inter', sans-serif;
-      background: linear-gradient(135deg, #f9fafb, #e0e7ff);
+      background: #f0f4f8;
       display: flex;
       justify-content: center;
       align-items: center;
       min-height: 100vh;
       margin: 0;
+      color: #333;
     }
     .card {
-      background: #ffffff;
+      background: #fff;
       padding: 30px;
-      border-radius: 24px;
-      width: 400px;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-      transition: transform 0.2s;
+      border-radius: 20px;
+      width: 420px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      transition: transform 0.2s, box-shadow 0.2s;
     }
-    .card:hover { transform: translateY(-5px); }
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+    }
     h2 {
       text-align: center;
       margin-bottom: 20px;
-      color: #333;
+      font-weight: 600;
+      color: #444;
     }
-    input, button {
+    input {
       width: 100%;
       padding: 12px;
       margin-top: 10px;
       border-radius: 12px;
       border: 1px solid #ccc;
       font-size: 14px;
+      transition: border-color 0.2s;
     }
-    input:focus { border-color: #6366f1; outline: none; }
+    input:focus {
+      border-color: #6366f1;
+      outline: none;
+    }
     button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 12px;
+      border-radius: 12px;
+      border: none;
       background: #6366f1;
       color: white;
-      border: none;
-      cursor: pointer;
       font-weight: 600;
-      transition: background 0.2s;
+      font-size: 14px;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.2s;
     }
-    button:hover { background: #4f46e5; }
-    .error { color: red; margin-top: 10px; text-align: center; }
+    button:hover {
+      background: #4f46e5;
+      transform: translateY(-2px);
+    }
+    .error {
+      color: red;
+      margin-top: 10px;
+      text-align: center;
+    }
     .stats {
       margin-top: 20px;
-      background: #f3f4f6;
-      padding: 15px;
+      background: #f9fafb;
+      padding: 20px;
       border-radius: 16px;
       box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
     }
     .stats p {
       margin: 6px 0;
       font-size: 14px;
-      color: #333;
+    }
+    .credits {
+      margin-top: 15px;
+      font-size: 12px;
+      text-align: center;
+      color: #888;
+    }
+    .credits a {
+      color: #6366f1;
+      text-decoration: none;
+    }
+    .credits a:hover {
+      text-decoration: underline;
     }
   </style>
 </head>
@@ -73,11 +106,13 @@
 
   <div id="result" class="stats"></div>
   <div id="error" class="error"></div>
+
+  <div class="credits">Credits to <a href="https://evinced.xyz" target="_blank">6spy</a></div>
 </div>
 
 <script>
 function formatPlaytime(ms) {
-  let totalSeconds = Math.floor(ms / 1000); 
+  let totalSeconds = Math.floor(ms / 1000);
   let d = Math.floor(totalSeconds / 86400);
   totalSeconds %= 86400;
   let h = Math.floor(totalSeconds / 3600);
@@ -86,7 +121,6 @@ function formatPlaytime(ms) {
   let s = totalSeconds % 60;
   return `${d}d ${h}h ${m}m ${s}s`;
 }
-
 
 async function getStats() {
   const apiKey = document.getElementById('apiKey').value;
