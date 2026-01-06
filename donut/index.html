@@ -76,15 +76,17 @@
 </div>
 
 <script>
-function formatPlaytime(seconds) {
-  let d = Math.floor(seconds / 86400);
-  seconds %= 86400;
-  let h = Math.floor(seconds / 3600);
-  seconds %= 3600;
-  let m = Math.floor(seconds / 60);
-  let s = seconds % 60;
+function formatPlaytime(ms) {
+  let totalSeconds = Math.floor(ms / 1000); 
+  let d = Math.floor(totalSeconds / 86400);
+  totalSeconds %= 86400;
+  let h = Math.floor(totalSeconds / 3600);
+  totalSeconds %= 3600;
+  let m = Math.floor(totalSeconds / 60);
+  let s = totalSeconds % 60;
   return `${d}d ${h}h ${m}m ${s}s`;
 }
+
 
 async function getStats() {
   const apiKey = document.getElementById('apiKey').value;
