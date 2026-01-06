@@ -1,0 +1,105 @@
+import { useState } from "react";
+
+// ⚠️ FRONTEND-ONLY VERSION
+// Uses /v1/stats/{user}
+// This works WITHOUT a backend, but the API key is exposed to the browser.
+// Anyone can see and reuse the key. Use at your own risk.
+
+export default function DonutSMPBalanceChecker() {
+  const [apiKey, setApiKey] = useState("");
+  const [username, setUsername] = useState("");
+  const [stats, setStats] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  const checkStats = async () => {
+    if (!apiKey) {
+      setError("API key is required");
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+    setStats(null);
+
+    try {
+      const res = await fetch(
+        `https://api.donutsmp.net/v1/stats/${username}`,
+        {
+          headers: {
+            Authorization: `Bearer ${apiKey}`
+          }
+        }
+      );
+
+      if (!res.ok) throw new Error("Failed to fetch player stats");
+
+      const data = await res.json();
+
+      if (!data?.result) {
+        throw new Error("Player not found");
+      }
+
+      setStats(data.result);
+    } catch (err) {
+      setError(err.message || "Something went wrong");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
+      <div className="bg-white rounded-2xl shadow-lg p-6 w-full max-w-md">
+        <h1 className="text-2xl font-bold mb-4 text-center">🍩 DonutSMP Player Stats</h1>
+
+        <input
+          type="password"
+          placeholder="Your DonutSMP API Key"
+          value={apiKey}
+          onChange={(e) => setApiKey(e.target.value)}
+          className="w-full border rounded-xl p-2 mb-3"
+        />
+
+        <input
+          type="text"
+          placeholder="Minecraft username"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          className="w-full border rounded-xl p-2 mb-4"
+        />
+
+        <button
+          onClick={checkStats}
+          disabled={!username || !apiKey || loading}
+          className="w-full bg-black text-white rounded-xl p-2 disabled:opacity-50"
+        >
+          {loading ? "Checking..." : "Get Stats"}
+        </button>
+
+        {stats && (
+          <div className="mt-4 text-sm space-y-1">
+            <p><b>Money:</b> ${Number(stats.money).toLocaleString()}</p>
+            <p><b>Shards:</b> {stats.shards}</p>
+            <p><b>Kills:</b> {stats.kills}</p>
+            <p><b>Deaths:</b> {stats.deaths}</p>
+            <p><b>Mobs Killed:</b> {stats.mobs_killed}</p>
+            <p><b>Playtime:</b> {stats.playtime}</p>
+            <p><b>Blocks Broken:</b> {stats.broken_blocks}</p>
+            <p><b>Blocks Placed:</b> {stats.placed_blocks}</p>
+            <p><b>Money from /sell:</b> ${Number(stats.money_made_from_sell).toLocaleString()}</p>
+            <p><b>Money spent in shop:</b> ${Number(stats.money_spent_on_shop).toLocaleString()}</p>
+          </div>
+        )}
+
+        {error && (
+          <p className="mt-4 text-center text-red-500">{error}</p>
+        )}
+
+        <p className="mt-6 text-xs text-gray-500 text-center">
+          Uses /v1/stats/{'{'}user{'}'} • API key is exposed to the browser
+        </p>
+      </div>
+    </div>
+  );
+}
