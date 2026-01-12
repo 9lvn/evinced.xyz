@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Item Balance & Runtime Calculator</title>
+  <style>
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: #0f172a;
+      color: #e5e7eb;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+    .card {
+      background: #020617;
+      padding: 24px;
+      border-radius: 16px;
+      width: 420px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    }
+    h1 {
+      font-size: 1.4rem;
+      margin-bottom: 16px;
+      text-align: center;
+    }
+    label {
+      display: block;
+      margin-top: 12px;
+      font-size: 0.9rem;
+    }
+    input {
+      width: 100%;
+      padding: 8px;
+      margin-top: 4px;
+      border-radius: 8px;
+      border: none;
+    }
+    button {
+      margin-top: 16px;
+      width: 100%;
+      padding: 10px;
+      border-radius: 10px;
+      border: none;
+      background: #2563eb;
+      color: white;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+    .results {
+      margin-top: 16px;
+      background: #020617;
+      padding: 12px;
+      border-radius: 10px;
+      font-size: 0.95rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Item Balance & Runtime</h1>
+
+    <p style="font-size:0.9rem; opacity:0.8;">
+      Usage per hour:<br>
+      • Bones: <strong>255,000</strong> (cost 136 each)<br>
+      • Blaze Rods: <strong>75,000</strong> (cost 150 each)<br><br>
+      Ratio: <strong>1 blaze rod = 3.75 bones</strong>
+    </p>
+
+    <label>Available Bones</label>
+    <input id="bones" type="text" placeholder="e.g. 3.75m" />
+
+    <label>Available Blaze Rods</label>
+    <input id="rods" type="text" placeholder="e.g. 1m" />
+
+    <button id="calcBtn">Calculate</button>
+
+    <div class="results" id="results">Enter values and press calculate.</div>
+  </div>
+
+  <script>
+    const BONES_PER_HOUR = 255000;
+    const RODS_PER_HOUR = 75000;
+
+    const BONE_COST = 136;
+    const ROD_COST = 150;
+
+    const BONES_PER_ROD = 3.75;
+
+    function parseNumber(value) {
+      if (!value) return 0;
+      const v = value.toLowerCase().trim();
+      const num = parseFloat(v);
+      if (isNaN(num)) return 0;
+      if (v.endsWith('k')) return num * 1_000;
+      if (v.endsWith('m')) return num * 1_000_000;
+      if (v.endsWith('b')) return num * 1_000_000_000;
+      return num;
+    }
+
+    function formatTime(hours) {
+      const totalSeconds = Math.floor(hours * 3600);
+      const h = Math.floor(totalSeconds / 3600);
+      const m = Math.floor((totalSeconds % 3600) / 60);
+      const s = totalSeconds % 60;
+      return `${h}h ${m}m ${s}s`;
+    }
+
+    function calculate() {
+      const bones = parseNumber(document.getElementById('bones').value);
+      const rods = parseNumber(document.getElementById('rods').value);
+
+      let output = '';
+
+      if (rods > 0) {
+        const neededBones = rods * BONES_PER_ROD;
+        output += `<strong>For ${rods.toLocaleString()} blaze rods you need:</strong><br>`;
+        output += `${Math.round(neededBones).toLocaleString()} bones<br><br>`;
+      }
+
+      if (bones > 0) {
+        const neededRods = bones / BONES_PER_ROD;
+        output += `<strong>For ${bones.toLocaleString()} bones you need:</strong><br>`;
+        output += `${Math.round(neededRods).toLocaleString()} blaze rods<br><br>`;
+      }
+
+      if (bones > 0 && rods > 0) {
+        const runtimeHours = Math.min(
+          bones / BONES_PER_HOUR,
+          rods / RODS_PER_HOUR
+        );
+
+        const totalCost = (bones * BONE_COST) + (rods * ROD_COST);
+        const costPerHour = totalCost / runtimeHours;
+
+        output += `<strong>Total runtime:</strong><br>`;
+        output += `${formatTime(runtimeHours)}<br><br>`;
+        output += `<strong>Total cost:</strong><br>`;
+        output += `${totalCost.toLocaleString()}<br><br>`;
+        output += `<strong>Cost per hour:</strong><br>`;
+        output += `${Math.round(costPerHour).toLocaleString()} per hour`;
+      }
+
+      if (!output) {
+        output = 'Enter at least one value.';
+      }
+
+      document.getElementById('results').innerHTML = output;
+    }
+
+    document.getElementById('calcBtn').addEventListener('click', calculate);
+  </script>
+</body>
+</html>
