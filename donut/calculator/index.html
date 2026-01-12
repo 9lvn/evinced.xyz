@@ -18,7 +18,7 @@
       background: #020617;
       padding: 24px;
       border-radius: 16px;
-      width: 420px;
+      width: 440px;
       box-shadow: 0 10px 30px rgba(0,0,0,0.4);
     }
     h1 {
@@ -64,9 +64,10 @@
 
     <p style="font-size:0.9rem; opacity:0.8;">
       Usage per hour:<br>
-      • Bones: <strong>255,000</strong> (cost 136 each)<br>
-      • Blaze Rods: <strong>75,000</strong> (cost 150 each)<br><br>
-      Ratio: <strong>1 blaze rod = 3.75 bones</strong>
+      • Bones: <strong>255,000</strong> (cost 136)<br>
+      • Blaze Rods: <strong>75,000</strong> (cost 150)<br>
+      Ratio: <strong>1 rod = 3.75 bones</strong><br>
+      Output: <strong>9 bones = 1 kelp block (750)</strong>
     </p>
 
     <label>Available Bones</label>
@@ -75,9 +76,9 @@
     <label>Available Blaze Rods</label>
     <input id="rods" type="text" placeholder="e.g. 1m" />
 
-    <button id="calcBtn">Calculate</button>
+    <button id="calcBtn" type="button">Calculate</button>
 
-    <div class="results" id="results">Enter values and press calculate.</div>
+    <div class="results" id="results">Enter values and press Calculate.</div>
   </div>
 
   <script>
@@ -88,6 +89,8 @@
     const ROD_COST = 150;
 
     const BONES_PER_ROD = 3.75;
+    const BONES_PER_KELP_BLOCK = 3;
+    const KELP_BLOCK_PRICE = 750;
 
     function parseNumber(value) {
       if (!value) return 0;
@@ -115,42 +118,34 @@
       let output = '';
 
       if (rods > 0) {
-        const neededBones = rods * BONES_PER_ROD;
-        output += `<strong>For ${rods.toLocaleString()} blaze rods you need:</strong><br>`;
-        output += `${Math.round(neededBones).toLocaleString()} bones<br><br>`;
+        output += `<strong>Needed bones:</strong><br>`;
+        output += `${Math.round(rods * BONES_PER_ROD).toLocaleString()}<br><br>`;
       }
 
       if (bones > 0) {
-        const neededRods = bones / BONES_PER_ROD;
-        output += `<strong>For ${bones.toLocaleString()} bones you need:</strong><br>`;
-        output += `${Math.round(neededRods).toLocaleString()} blaze rods<br><br>`;
+        output += `<strong>Needed blaze rods:</strong><br>`;
+        output += `${Math.round(bones / BONES_PER_ROD).toLocaleString()}<br><br>`;
       }
 
       if (bones > 0 && rods > 0) {
-        const runtimeHours = Math.min(
-          bones / BONES_PER_HOUR,
-          rods / RODS_PER_HOUR
-        );
+        const runtimeHours = Math.min(bones / BONES_PER_HOUR, rods / RODS_PER_HOUR);
 
-        const totalCost = (bones * BONE_COST) + (rods * ROD_COST);
-        const costPerHour = totalCost / runtimeHours;
+        const costPerHour = (BONES_PER_HOUR * BONE_COST) + (RODS_PER_HOUR * ROD_COST);
+        const kelpBlocksPerHour = BONES_PER_HOUR / BONES_PER_KELP_BLOCK;
+        const revenuePerHour = kelpBlocksPerHour * KELP_BLOCK_PRICE;
+        const profitPerHour = revenuePerHour - costPerHour;
 
-        output += `<strong>Total runtime:</strong><br>`;
-        output += `${formatTime(runtimeHours)}<br><br>`;
-        output += `<strong>Total cost:</strong><br>`;
-        output += `${totalCost.toLocaleString()}<br><br>`;
-        output += `<strong>Cost per hour:</strong><br>`;
-        output += `${Math.round(costPerHour).toLocaleString()} per hour`;
+        output += `<strong>Runtime:</strong><br>${formatTime(runtimeHours)}<br><br>`;
+        output += `<strong>Cost / hour:</strong><br>${costPerHour.toLocaleString()}<br><br>`;
+        output += `<strong>Revenue / hour:</strong><br>${revenuePerHour.toLocaleString()}<br><br>`;
+        output += `<strong>Profit / hour:</strong><br>${profitPerHour.toLocaleString()}`;
       }
 
-      if (!output) {
-        output = 'Enter at least one value.';
-      }
-
+      if (!output) output = 'Enter at least one value.';
       document.getElementById('results').innerHTML = output;
     }
 
-    document.getElementById('calcBtn').addEventListener('click', calculate);
+    document.getElementById('calcBtn').onclick = calculate;
   </script>
 </body>
 </html>
