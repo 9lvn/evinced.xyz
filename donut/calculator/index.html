@@ -18,7 +18,7 @@
       background: #020617;
       padding: 24px;
       border-radius: 16px;
-      width: 440px;
+      width: 500px;
       box-shadow: 0 10px 30px rgba(0,0,0,0.4);
     }
     h1 {
@@ -67,14 +67,18 @@
       • Bones: <strong>255,000</strong> (cost 136)<br>
       • Blaze Rods: <strong>75,000</strong> (cost 150)<br>
       Ratio: <strong>1 rod = 3.75 bones</strong><br>
-      Output: <strong>3 bones = 1 kelp block (750)</strong>
+      Output: <strong>3 bones = 1 kelp block (750)</strong><br>
+      Shortcuts: <strong>1dc = 93,312 items</strong>
     </p>
 
     <label>Available Bones</label>
-    <input id="bones" type="text" placeholder="e.g. 3.75m" />
+    <input id="bones" type="text" placeholder="e.g. 3.75m or 1dc" />
 
     <label>Available Blaze Rods</label>
-    <input id="rods" type="text" placeholder="e.g. 1m" />
+    <input id="rods" type="text" placeholder="e.g. 1m or 2dc" />
+
+    <label>Total Money to Invest</label>
+    <input id="money" type="text" placeholder="e.g. 300m" />
 
     <button id="calcBtn" type="button">Calculate</button>
 
@@ -82,70 +86,120 @@
   </div>
 
   <script>
-    const BONES_PER_HOUR = 255000;
-    const RODS_PER_HOUR = 75000;
+    document.addEventListener('DOMContentLoaded', () => {
+      const BONES_PER_HOUR = 255000;
+      const RODS_PER_HOUR = 75000;
+      const BONE_COST = 136;
+      const ROD_COST = 150;
+      const BONES_PER_ROD = 3.75;
+      const BONES_PER_KELP_BLOCK = 3;
+      const KELP_BLOCK_PRICE = 750;
+      const ITEMS_PER_DOUBLE_CHEST = 93312;
 
-    const BONE_COST = 136;
-    const ROD_COST = 150;
+      function parseInput(value) {
+        if (!value) return { number: 0, label: '0' };
+        const v = value.toLowerCase().trim();
+        let number = 0;
+        let label = '';
 
-    const BONES_PER_ROD = 3.75;
-    const BONES_PER_KELP_BLOCK = 3;
-    const KELP_BLOCK_PRICE = 750;
+        if (v.endsWith('k')) {
+          number = parseFloat(v) * 1_000;
+          label = number.toLocaleString();
+        } else if (v.endsWith('m')) {
+          number = parseFloat(v) * 1_000_000;
+          label = number.toLocaleString();
+        } else if (v.endsWith('b')) {
+          number = parseFloat(v) * 1_000_000_000;
+          label = number.toLocaleString();
+        } else if (v.endsWith('dc')) {
+          const mult = parseFloat(v);
+          number = mult * ITEMS_PER_DOUBLE_CHEST;
+          label = `${mult}dc`;
+        } else {
+          number = parseFloat(v);
+          label = number.toLocaleString();
+        }
 
-    function parseNumber(value) {
-      if (!value) return 0;
-      const v = value.toLowerCase().trim();
-      const num = parseFloat(v);
-      if (isNaN(num)) return 0;
-      if (v.endsWith('k')) return num * 1_000;
-      if (v.endsWith('m')) return num * 1_000_000;
-      if (v.endsWith('b')) return num * 1_000_000_000;
-      return num;
-    }
-
-    function formatTime(hours) {
-      const totalSeconds = Math.floor(hours * 3600);
-      const h = Math.floor(totalSeconds / 3600);
-      const m = Math.floor((totalSeconds % 3600) / 60);
-      const s = totalSeconds % 60;
-      return `${h}h ${m}m ${s}s`;
-    }
-
-    function calculate() {
-      const bones = parseNumber(document.getElementById('bones').value);
-      const rods = parseNumber(document.getElementById('rods').value);
-
-      let output = '';
-
-      if (rods > 0) {
-        output += `<strong>Needed bones:</strong><br>`;
-        output += `${Math.round(rods * BONES_PER_ROD).toLocaleString()}<br><br>`;
+        return { number, label };
       }
 
-      if (bones > 0) {
-        output += `<strong>Needed blaze rods:</strong><br>`;
-        output += `${Math.round(bones / BONES_PER_ROD).toLocaleString()}<br><br>`;
+      function parseMoney(value) {
+        if (!value) return 0;
+        const v = value.toLowerCase().trim();
+        let number = parseFloat(v);
+        if (v.endsWith('k')) number *= 1_000;
+        else if (v.endsWith('m')) number *= 1_000_000;
+        else if (v.endsWith('b')) number *= 1_000_000_000;
+        return number;
       }
 
-      if (bones > 0 && rods > 0) {
-        const runtimeHours = Math.min(bones / BONES_PER_HOUR, rods / RODS_PER_HOUR);
-
-        const costPerHour = (BONES_PER_HOUR * BONE_COST) + (RODS_PER_HOUR * ROD_COST);
-        const kelpBlocksPerHour = BONES_PER_HOUR / BONES_PER_KELP_BLOCK;
-        const revenuePerHour = kelpBlocksPerHour * KELP_BLOCK_PRICE;
-        const profitPerHour = revenuePerHour - costPerHour;
-
-        output += `<strong>Runtime:</strong><br>${formatTime(runtimeHours)}<br><br>`;
-        output += `<strong>Cost / hour:</strong><br>${costPerHour.toLocaleString()}<br><br>`;
-        output += `<strong>Revenue / hour:</strong><br>${revenuePerHour.toLocaleString()}<br><br>`;
-        output += `<strong>Profit / hour:</strong><br>${profitPerHour.toLocaleString()}`;
+      function formatTime(hours) {
+        const totalSeconds = Math.floor(hours * 3600);
+        const h = Math.floor(totalSeconds / 3600);
+        const m = Math.floor((totalSeconds % 3600) / 60);
+        const s = totalSeconds % 60;
+        return `${h}h ${m}m ${s}s`;
       }
 
-      if (!output) output = 'Enter at least one value.';
-      document.getElementById('results').innerHTML = output;
-    }
+      function calculate() {
+        const bonesInput = parseInput(document.getElementById('bones').value);
+        const rodsInput = parseInput(document.getElementById('rods').value);
+        const moneyInput = parseMoney(document.getElementById('money').value);
 
-    document.getElementById('calcBtn').onclick = calculate;
+        let bones = bonesInput.number;
+        let rods = rodsInput.number;
+
+        let output = '';
+
+        // Calculate suggested investment if money input is provided
+        if (moneyInput > 0) {
+          const totalRodCost = ROD_COST * RODS_PER_HOUR;
+          const totalBoneCost = BONE_COST * BONES_PER_HOUR;
+          const ratio = totalRodCost / totalBoneCost;
+
+          // Determine how much money to put in rods and bones
+          const bonesInvestment = moneyInput / (1 + ratio);
+          const rodsInvestment = moneyInput - bonesInvestment;
+
+          const bonesToBuy = Math.max(0, bonesInvestment / BONE_COST - bones); // account for existing bones
+          const rodsToBuy = Math.max(0, rodsInvestment / ROD_COST - rods); // account for existing rods
+
+          output += `<strong>Suggested investment:</strong><br>`;
+          output += `Bones: ${Math.round(bonesToBuy).toLocaleString()}<br>`;
+          output += `Blaze Rods: ${Math.round(rodsToBuy).toLocaleString()}<br><br>`;
+        }
+
+        if (rods > 0) {
+          const neededBones = rods * BONES_PER_ROD;
+          output += `<strong>Needed bones for ${rodsInput.label} rods:</strong><br>`;
+          output += `${neededBones.toLocaleString()}<br><br>`;
+        }
+
+        if (bones > 0) {
+          const neededRods = bones / BONES_PER_ROD;
+          output += `<strong>Needed blaze rods for ${bonesInput.label} bones:</strong><br>`;
+          output += `${neededRods.toLocaleString()}<br><br>`;
+        }
+
+        if (bones > 0 && rods > 0) {
+          const runtimeHours = Math.min(bones / BONES_PER_HOUR, rods / RODS_PER_HOUR);
+          const costPerHour = (BONES_PER_HOUR * BONE_COST) + (RODS_PER_HOUR * ROD_COST);
+          const kelpBlocksPerHour = BONES_PER_HOUR / BONES_PER_KELP_BLOCK;
+          const revenuePerHour = kelpBlocksPerHour * KELP_BLOCK_PRICE;
+          const profitPerHour = revenuePerHour - costPerHour;
+
+          output += `<strong>Runtime:</strong><br>${formatTime(runtimeHours)}<br><br>`;
+          output += `<strong>Cost / hour:</strong><br>${costPerHour.toLocaleString()}<br><br>`;
+          output += `<strong>Revenue / hour:</strong><br>${revenuePerHour.toLocaleString()}<br><br>`;
+          output += `<strong>Profit / hour:</strong><br>${profitPerHour.toLocaleString()}`;
+        }
+
+        if (!output) output = 'Enter at least one value.';
+        document.getElementById('results').innerHTML = output;
+      }
+
+      document.getElementById('calcBtn').addEventListener('click', calculate);
+    });
   </script>
 </body>
 </html>
