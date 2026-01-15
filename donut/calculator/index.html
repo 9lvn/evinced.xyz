@@ -40,11 +40,6 @@ body {
 label {
   display: block;
   margin-top: 10px;
-  font-size: 0.9rem;
-}
-.small {
-  font-size: 0.75rem;
-  opacity: 0.7;
 }
 input {
   width: 100%;
@@ -66,11 +61,16 @@ button {
 .results {
   margin-top: 16px;
   background: #020617;
-  padding: 12px;
+  padding: 14px;
   border-radius: 10px;
 }
 .hidden {
   display: none;
+}
+.small {
+  font-size: 0.75rem;
+  opacity: 0.7;
+  margin-bottom: 8px;
 }
 </style>
 </head>
@@ -78,167 +78,217 @@ button {
 <body>
 <div class="card">
 
-  <div class="tabs">
-    <div class="tab active" id="tabNormal">Normal</div>
-    <div class="tab" id="tabGoal">Goal</div>
-  </div>
+<div class="tabs">
+  <div class="tab active" id="tabNormal">Normal</div>
+  <div class="tab" id="tabGoal">Goal</div>
+  <div class="tab" id="tabInvest">Investment</div>
+</div>
 
-  <div class="small">Shortcuts: k, m, b, dc &nbsp; (1dc = 93,312 items)</div>
+<div class="small">Shortcuts supported: k, m, b, dc (1dc = 93,312)</div>
 
-  <!-- Normal calculation -->
-  <div id="normalTab">
-    <label>Available bones</label>
-    <input id="bones" placeholder="e.g. 3m or 1dc">
+<!-- NORMAL -->
+<div id="normalTab">
+  <label>Available bones</label>
+  <input id="bones" placeholder="e.g. 2dc or 3m">
 
-    <label>Available blaze rods</label>
-    <input id="rods" placeholder="e.g. 500k or 2dc">
+  <label>Available blaze rods</label>
+  <input id="rods" placeholder="e.g. 1dc">
 
-    <label>Bone price</label>
-    <input id="bonePrice" placeholder="136">
+  <label>Bone price</label>
+  <input id="bonePrice" value="136">
 
-    <label>Rod price</label>
-    <input id="rodPrice" placeholder="150">
+  <label>Rod price</label>
+  <input id="rodPrice" value="150">
 
-    <button onclick="calculateNormal()">Calculate</button>
-  </div>
+  <button onclick="calculateNormal()">Calculate</button>
+</div>
 
-  <!-- Goal calculation -->
-  <div id="goalTab" class="hidden">
-    <label>Desired runtime (hours)</label>
-    <input id="goalHours" placeholder="e.g. 6">
+<!-- GOAL -->
+<div id="goalTab" class="hidden">
+  <label>Desired runtime (hours)</label>
+  <input id="goalHours">
 
-    <label>OR desired total profit</label>
-    <input id="goalProfit" placeholder="e.g. 500m">
+  <label>OR desired total profit</label>
+  <input id="goalProfit">
 
-    <label>Bone price</label>
-    <input id="goalBonePrice" placeholder="136">
+  <label>Bone price</label>
+  <input id="goalBonePrice" value="136">
 
-    <label>Rod price</label>
-    <input id="goalRodPrice" placeholder="150">
+  <label>Rod price</label>
+  <input id="goalRodPrice" value="150">
 
-    <button onclick="calculateGoal()">Calculate</button>
-  </div>
+  <button onclick="calculateGoal()">Calculate</button>
+</div>
 
-  <div class="results" id="results">Enter values to calculate.</div>
+<!-- INVESTMENT -->
+<div id="investTab" class="hidden">
+  <label>Current bones</label>
+  <input id="currentBones">
+
+  <label>Current blaze rods</label>
+  <input id="currentRods">
+
+  <label>Investment budget</label>
+  <input id="investment">
+
+  <label>Bone price</label>
+  <input id="invBonePrice" value="136">
+
+  <label>Rod price</label>
+  <input id="invRodPrice" value="150">
+
+  <button onclick="calculateInvestment()">Calculate</button>
+</div>
+
+<div class="results" id="results">Enter values to calculate.</div>
 </div>
 
 <script>
-const BONES_PER_HOUR = 255000;
-const RODS_PER_HOUR = 75000;
-const BONES_PER_KELP_BLOCK = 3;
-const KELP_BLOCK_PRICE = 750;
-const ITEMS_PER_DC = 93312;
+const BONES_PER_HOUR = 255000
+const RODS_PER_HOUR = 75000
+const TARGET_RATIO = 3.75
+const BONES_PER_KELP_BLOCK = 3
+const KELP_BLOCK_PRICE = 750
+const ITEMS_PER_DC = 93312
 
-function parseValue(value) {
-  if (!value) return 0;
-  const v = value.toLowerCase().trim();
-  let n = parseFloat(v);
-  if (v.endsWith("dc")) return n * ITEMS_PER_DC;
-  if (v.endsWith("k")) return n * 1e3;
-  if (v.endsWith("m")) return n * 1e6;
-  if (v.endsWith("b")) return n * 1e9;
-  return n;
+function parseValue(v) {
+  if (!v) return 0
+  v = v.toLowerCase().trim()
+  let n = parseFloat(v)
+  if (v.endsWith("dc")) return n * ITEMS_PER_DC
+  if (v.endsWith("k")) return n * 1e3
+  if (v.endsWith("m")) return n * 1e6
+  if (v.endsWith("b")) return n * 1e9
+  return n
 }
 
-function formatAbbr(n) {
-  const a = Math.abs(n);
-  if (a >= 1e9) return (n / 1e9).toFixed(2) + "b";
-  if (a >= 1e6) return (n / 1e6).toFixed(2) + "m";
-  if (a >= 1e3) return (n / 1e3).toFixed(2) + "k";
-  return Math.round(n).toString();
+function abbr(n) {
+  const a = Math.abs(n)
+  if (a >= 1e9) return (n / 1e9).toFixed(2) + "b"
+  if (a >= 1e6) return (n / 1e6).toFixed(2) + "m"
+  if (a >= 1e3) return (n / 1e3).toFixed(2) + "k"
+  return Math.round(n)
 }
 
-function formatTime(hours) {
-  const totalSeconds = Math.floor(hours * 3600);
-  const h = Math.floor(totalSeconds / 3600);
-  const m = Math.floor((totalSeconds % 3600) / 60);
-  const s = totalSeconds % 60;
-  return `${h}h ${m}m ${s}s`;
+function time(h) {
+  const s = Math.floor(h * 3600)
+  return `${Math.floor(s / 3600)}h ${Math.floor((s % 3600) / 60)}m ${s % 60}s`
 }
 
+/* NORMAL */
 function calculateNormal() {
-  const bones = parseValue(document.getElementById("bones").value);
-  const rods = parseValue(document.getElementById("rods").value);
-  const bonePrice = parseValue(document.getElementById("bonePrice").value || 136);
-  const rodPrice = parseValue(document.getElementById("rodPrice").value || 150);
+  const b = parseValue(bones.value)
+  const r = parseValue(rods.value)
+  const bp = parseValue(bonePrice.value)
+  const rp = parseValue(rodPrice.value)
 
-  if (bones <= 0 || rods <= 0) {
-    results.innerHTML = "Both bones and blaze rods are required.";
-    return;
+  if (b <= 0 || r <= 0) {
+    results.innerHTML = "Bones and blaze rods are required."
+    return
   }
 
-  const runtimeHours = Math.min(
-    bones / BONES_PER_HOUR,
-    rods / RODS_PER_HOUR
-  );
+  const runtime = Math.min(b / BONES_PER_HOUR, r / RODS_PER_HOUR)
+  const costPH = BONES_PER_HOUR * bp + RODS_PER_HOUR * rp
+  const revenuePH = (BONES_PER_HOUR / BONES_PER_KELP_BLOCK) * KELP_BLOCK_PRICE
 
-  const costPerHour =
-    BONES_PER_HOUR * bonePrice +
-    RODS_PER_HOUR * rodPrice;
-
-  const revenuePerHour =
-    (BONES_PER_HOUR / BONES_PER_KELP_BLOCK) *
-    KELP_BLOCK_PRICE;
-
-  const totalProfit =
-    (revenuePerHour - costPerHour) * runtimeHours;
+  const totalCost = costPH * runtime
+  const totalRevenue = revenuePH * runtime
+  const profit = totalRevenue - totalCost
 
   results.innerHTML = `
-    <strong>Runtime</strong><br>${formatTime(runtimeHours)}<br><br>
-    <strong>Cost / hour</strong><br>${formatAbbr(costPerHour)}<br>
-    <strong>Revenue / hour</strong><br>${formatAbbr(revenuePerHour)}<br><br>
-    <strong>Total profit</strong><br>${formatAbbr(totalProfit)}
-  `;
+    <strong>Runtime</strong><br>${time(runtime)}<br><br>
+    Cost / hour: ${abbr(costPH)}<br>
+    Revenue / hour: ${abbr(revenuePH)}<br><br>
+    Total cost: ${abbr(totalCost)}<br>
+    Total revenue: ${abbr(totalRevenue)}<br>
+    <strong>Total profit: ${abbr(profit)}</strong>
+  `
 }
 
+/* GOAL */
 function calculateGoal() {
-  const hours = parseValue(document.getElementById("goalHours").value);
-  const targetProfit = parseValue(document.getElementById("goalProfit").value);
-  const bonePrice = parseValue(document.getElementById("goalBonePrice").value || 136);
-  const rodPrice = parseValue(document.getElementById("goalRodPrice").value || 150);
+  const hoursIn = parseValue(goalHours.value)
+  const profitIn = parseValue(goalProfit.value)
+  const bp = parseValue(goalBonePrice.value)
+  const rp = parseValue(goalRodPrice.value)
 
-  const costPerHour =
-    BONES_PER_HOUR * bonePrice +
-    RODS_PER_HOUR * rodPrice;
+  const revenuePH = (BONES_PER_HOUR / BONES_PER_KELP_BLOCK) * KELP_BLOCK_PRICE
+  const costPH = BONES_PER_HOUR * bp + RODS_PER_HOUR * rp
+  const profitPH = revenuePH - costPH
 
-  const revenuePerHour =
-    (BONES_PER_HOUR / BONES_PER_KELP_BLOCK) *
-    KELP_BLOCK_PRICE;
+  const runtime = hoursIn > 0 ? hoursIn : profitIn / profitPH
 
-  const profitPerHour = revenuePerHour - costPerHour;
-  const runtimeHours = hours > 0 ? hours : targetProfit / profitPerHour;
+  const bonesUsed = BONES_PER_HOUR * runtime
+  const rodsUsed = RODS_PER_HOUR * runtime
 
-  const bonesNeeded = BONES_PER_HOUR * runtimeHours;
-  const rodsNeeded = RODS_PER_HOUR * runtimeHours;
-  const totalProfit = profitPerHour * runtimeHours;
+  const totalCost = costPH * runtime
+  const totalRevenue = revenuePH * runtime
+  const profit = totalRevenue - totalCost
 
   results.innerHTML = `
-    <strong>Runtime</strong><br>${formatTime(runtimeHours)}<br><br>
-    <strong>Bones needed</strong><br>${formatAbbr(bonesNeeded)}<br>
-    <strong>Blaze rods needed</strong><br>${formatAbbr(rodsNeeded)}<br><br>
-    <strong>Total profit</strong><br>${formatAbbr(totalProfit)}
-  `;
+    <strong>Runtime</strong><br>${time(runtime)}<br><br>
+    Bones used: ${abbr(bonesUsed)}<br>
+    Blaze rods used: ${abbr(rodsUsed)}<br><br>
+    Total cost: ${abbr(totalCost)}<br>
+    Total revenue: ${abbr(totalRevenue)}<br>
+    <strong>Total profit: ${abbr(profit)}</strong>
+  `
 }
 
-/* tab switching */
-const tabNormal = document.getElementById("tabNormal");
-const tabGoal = document.getElementById("tabGoal");
-const normalTab = document.getElementById("normalTab");
-const goalTab = document.getElementById("goalTab");
+/* INVESTMENT */
+function calculateInvestment() {
+  const cb = parseValue(currentBones.value)
+  const cr = parseValue(currentRods.value)
+  const budget = parseValue(investment.value)
+  const bp = parseValue(invBonePrice.value)
+  const rp = parseValue(invRodPrice.value)
 
-tabNormal.onclick = () => {
-  tabNormal.classList.add("active");
-  tabGoal.classList.remove("active");
-  normalTab.classList.remove("hidden");
-  goalTab.classList.add("hidden");
-};
+  if (budget <= 0) {
+    results.innerHTML = "Investment budget is required."
+    return
+  }
 
-tabGoal.onclick = () => {
-  tabGoal.classList.add("active");
-  tabNormal.classList.remove("active");
-  goalTab.classList.remove("hidden");
-  normalTab.classList.add("hidden");
-};
+  const costPerSet = TARGET_RATIO * bp + rp
+  const totalRods = (budget + cb * bp + cr * rp) / costPerSet
+  const totalBones = totalRods * TARGET_RATIO
+
+  const buyBones = Math.max(0, totalBones - cb)
+  const buyRods = Math.max(0, totalRods - cr)
+
+  const runtime = Math.min(
+    totalBones / BONES_PER_HOUR,
+    totalRods / RODS_PER_HOUR
+  )
+
+  const revenuePH = (BONES_PER_HOUR / BONES_PER_KELP_BLOCK) * KELP_BLOCK_PRICE
+  const costPH = BONES_PER_HOUR * bp + RODS_PER_HOUR * rp
+
+  const totalCost = costPH * runtime
+  const totalRevenue = revenuePH * runtime
+  const profit = totalRevenue - totalCost
+
+  results.innerHTML = `
+    Bones to buy: ${abbr(buyBones)}<br>
+    Blaze rods to buy: ${abbr(buyRods)}<br><br>
+    Runtime: ${time(runtime)}<br><br>
+    Total cost: ${abbr(totalCost)}<br>
+    Total revenue: ${abbr(totalRevenue)}<br>
+    <strong>Total profit: ${abbr(profit)}</strong>
+  `
+}
+
+/* TABS */
+function switchTab(active, show) {
+  document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"))
+  document.querySelectorAll("#normalTab,#goalTab,#investTab")
+    .forEach(t => t.classList.add("hidden"))
+  active.classList.add("active")
+  show.classList.remove("hidden")
+}
+
+tabNormal.onclick = () => switchTab(tabNormal, normalTab)
+tabGoal.onclick = () => switchTab(tabGoal, goalTab)
+tabInvest.onclick = () => switchTab(tabInvest, investTab)
 </script>
 </body>
 </html>
